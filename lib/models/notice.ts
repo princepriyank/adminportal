@@ -11,43 +11,59 @@ export default interface Notice {
 	user_id: string;
 }
 
-export const tableName = () => {
+const tableName = () => {
 	return "notices";
 };
 
 export const create = async (notice: Notice) => {
-	notice.attachments = JSON.stringify(notice.attachments)
-	var result = await db.insertDataintoDatabase(tableName(), notice);
-	return result;
+	try {
+		notice.attachments = JSON.stringify(notice.attachments)
+		var result = await db.insertDataintoDatabase(tableName(), notice);
+		return result;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export const findByUserID = async (user_id) => {
-	var params = {
-		TableName: tableName(),
-		key: {
-			"user_id": user_id,
-		},
-	};
-	var result = await db.fetchDatafromDatabase2(params);
-	return result;
+	try {
+		var params = {
+			TableName: tableName(),
+			Key: {
+				"user_id": user_id,
+			},
+		};
+		var result = await db.fetchDatafromDatabase2(params);
+		result.attachments = JSON.parse(result.attachments)
+		return result;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export const findByID = async (id) => {
-	var params = {
-		TableName: tableName(),
-		key: {
-			"id": id,
-		},
-	};
-	var result = await db.fetchDatafromDatabase2(params);
-	result.attachments = JSON.parse(result.attachments)
-	return result;
+	try {
+		var params = {
+			TableName: tableName(),
+			Key: {
+				"id": id,
+			},
+		};
+		var result = await db.fetchDatafromDatabase2(params);
+		result.attachments = JSON.parse(result.attachments)
+		return result;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export const updateData = async (id, key, value) => {
 	var params = {
 		Tablename: tableName(),
-		key: {
+		Key: {
 			"id": id
 		},
 		UpdateExpression: `set ${key} = :r`,
@@ -71,7 +87,15 @@ export const updateWholeObj = async (id, notice: Notice) => {
 
 export const toggleVisibility = async (id, visible_status) => {
 	try {
-		var notice = await findByID(id);
+		var params = {
+			AttributesToGet: ['closeDate', 'timestamp'],
+			TableName: tableName(),
+			Key: {
+				"id": id,
+			},
+		};
+		var notice = await db.fetchDatafromDatabase2(params);
+
 		if (visible_status == 1) {
 			updateData(id, "closeDate", new Date().getTime() + (86400000 * 5));
 
@@ -96,7 +120,7 @@ export const toggleImportance = async (id, value) => {
 export const deleteRow = async (id) => {
 	var params = {
 		TableName: tableName(),
-		key: {
+		Key: {
 			"id": id
 		}
 	}
@@ -121,6 +145,9 @@ export const getActiveNotices = async () => {
 		}
 
 		var active_notices = await db.fetchDatafromDatabase1(params);
+		active_notices.forEach(notice => {
+			notice.attachments = JSON.parse(notice.attachments)
+		})
 		return active_notices;
 
 	} catch (err) {

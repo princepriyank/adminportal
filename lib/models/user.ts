@@ -1,3 +1,5 @@
+import * as db from "./../api/db";
+
 export default interface User {
 	id: string;
 	name: string;
