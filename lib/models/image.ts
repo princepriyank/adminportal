@@ -6,3 +6,7 @@ export default interface Image {
    image: string;
 
 }
+
+const tableName = () => {
+   return 'images';
+}
