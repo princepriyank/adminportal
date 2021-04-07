@@ -44,7 +44,7 @@ const options = {
   // when an action is performed.
   // https://next-auth.js.org/configuration/callbacks
   callbacks: {
-    async signIn(user, account, profile) {
+    async signIn(user, account, profile, session) {
       let data = await db
         .query(`SELECT * FROM users WHERE email="${profile.email}";`)
         .catch((e) => {
@@ -59,7 +59,12 @@ const options = {
       }
     },
     // async redirect(url, baseUrl) { return baseUrl },
-    // async session(session, user) { return session },
+    async session(session, user) {
+      const data = user;
+      data.role = 1;
+      session.user = data;
+      return session;
+    },
     // async jwt(token, user, account, profile, isNewUser) { return token }
   },
 
