@@ -45,11 +45,14 @@ const options = {
   // https://next-auth.js.org/configuration/callbacks
   callbacks: {
     async signIn(user, account, profile) {
-      let data = await db.query(
-        `SELECT * FROM users WHERE email=${profile.email};`
-      );
-      console.log(data);
-      if (data) {
+      let data = await db
+        .query(`SELECT * FROM users WHERE email="${profile.email}";`)
+        .catch((e) => {
+          console.log(e);
+        });
+      let a = JSON.parse(JSON.stringify(data));
+      console.log(a);
+      if (a[0]) {
         return true;
       } else {
         return false;

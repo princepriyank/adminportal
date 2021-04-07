@@ -15,6 +15,17 @@ import FormGroup from "@material-ui/core/FormGroup";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import { Button } from "@material-ui/core";
+import clsx from "clsx";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+import List from "@material-ui/core/List";
+import Divider from "@material-ui/core/Divider";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import InboxIcon from "@material-ui/icons/MoveToInbox";
+import MailIcon from "@material-ui/icons/Mail";
+import PermIdentityIcon from "@material-ui/icons/PermIdentity";
+import CallToActionIcon from "@material-ui/icons/CallToAction";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,6 +36,12 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+  },
+  list: {
+    width: 250,
+  },
+  fullList: {
+    width: "auto",
   },
 }));
 
@@ -45,20 +62,93 @@ export default function ButtonAppBar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+
+  const list = (anchor) => (
+    <div
+      className={clsx(classes.list, {
+        [classes.fullList]: anchor === "top" || anchor === "bottom",
+      })}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        {session && (
+          <ListItem button key={session.user.name}>
+            <ListItemIcon>
+              <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <span
+                  style={{ backgroundImage: `url(${session.user.image})` }}
+                  className={styles.avatar}
+                />
+              </IconButton>
+            </ListItemIcon>
+            <ListItemText primary={session.user.name} />
+          </ListItem>
+        )}
+      </List>
+      <Divider />
+      <List>
+        {["Profile", "Events", "Notice"].map((text, index) => (
+          <ListItem button key={text}>
+            <ListItemIcon></ListItemIcon>
+            <Link href={`/${text.toLowerCase()}`}>
+              <ListItemText primary={text} />
+            </Link>
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
+        <SwipeableDrawer
+          anchor={"left"}
+          open={state["left"]}
+          onClose={toggleDrawer("left", false)}
+          onOpen={toggleDrawer("left", true)}
+        >
+          {list("left")}
+        </SwipeableDrawer>
         <Toolbar>
           <IconButton
             edge="start"
             className={classes.menuButton}
             color="inherit"
             aria-label="menu"
+            onClick={toggleDrawer("left", true)}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Resume Manager
+            Admin Portal
           </Typography>
           {!session && (
             <>
