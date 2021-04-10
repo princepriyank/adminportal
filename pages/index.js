@@ -48,7 +48,7 @@ export default function Page({ props }) {
             <CardContent>
               <Image src="/logo512.png" width="100" height="100" />
               <Typography className="title" color="textPrimary">
-                Welcome to Faculty Portal
+                Welcome to Admin Portal
               </Typography>
 
               <CardActions className="card">
