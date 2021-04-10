@@ -15,8 +15,9 @@ import { notice } from "../lib/models/notice";
 import Grid from "@material-ui/core/Grid";
 
 const Sheet = styled(Paper)`
+  margin-top: 5vh;
   width: 90%;
-  max-width:1200px;
+  max-width: 1200px;
   .filter-row {
     display: flex;
     justify-content: space-around;
@@ -45,8 +46,8 @@ export default function Tablepage(props) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [category, setCategory] = useState("");
-  const [name, setName] = useState("");
-  const detail = JSON.parse(props.data);
+  const [title, setTitle] = useState("");
+  const [detail,useDetail] = useState(JSON.parse(props.data));
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -55,7 +56,7 @@ export default function Tablepage(props) {
     setCategory(event.target.value);
   };
   const handleNameChange = (event) => {
-    setName(event.target.value);
+    setTitle(event.target.value);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -65,14 +66,13 @@ export default function Tablepage(props) {
 
   return (
     <Sheet>
-      
       <div className="filter-row">
         <div>
           <SearchIcon />
           <TextField
             id="name-search"
             label="Search by name"
-            value={name}
+            value={title}
             onChange={handleNameChange}
             type="search"
           />
@@ -109,7 +109,7 @@ export default function Tablepage(props) {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row["id"]}>
                     {props.notice.map((column) => {
                       const value = row[column.id];
                       return (

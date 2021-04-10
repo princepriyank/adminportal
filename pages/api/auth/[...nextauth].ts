@@ -51,7 +51,6 @@ const options = {
           console.log(e);
         });
       let a = JSON.parse(JSON.stringify(data));
-      console.log(a);
       if (a[0]) {
         return true;
       } else {
@@ -59,12 +58,12 @@ const options = {
       }
     },
     // async redirect(url, baseUrl) { return baseUrl },
-    async session(session, user) {
-      const data = user;
-      data.role = 1;
-      session.user = data;
-      return session;
-    },
+    // async session(session, user) {
+    //   const data = user;
+    //   data.role = 1;
+    //   session.user = data;
+    //   return session;
+    // },
     // async jwt(token, user, account, profile, isNewUser) { return token }
   },
 

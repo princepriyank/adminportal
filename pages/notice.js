@@ -23,6 +23,7 @@ export default function Page({ data }) {
   return (
     <Layout>
       <Wrap>
+        
       <Sheet notice={Notice} data={data} /></Wrap>
     </Layout>
   );

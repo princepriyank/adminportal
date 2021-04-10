@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "components/sheet.js", "lib/columns.js"  ],
+, "components/sheet.js", "lib/columns.js", "pages/api/faculty/[type].js", "pages/api/innovation/[type].js"  ],
   "exclude": [
     "node_modules"
   ]
