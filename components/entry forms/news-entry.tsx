@@ -17,6 +17,7 @@ export default function EntryForm() {
     description: "",
     openDate: null,
     closeDate: null,
+    venue: "",
     attachments: []
   });
   const [submitting, setSubmitting] = useState(false);
@@ -45,16 +46,16 @@ export default function EntryForm() {
 
   return (
     <Grid
-  container
-  spacing={0}
-  direction="column"
-  alignItems="center"
-  justify="center"
-  style={{ minHeight: '100vh' }}
->
-
-  <Grid item xs={3}>
-    <Paper className="Modal">
+    container
+    spacing={0}
+    direction="column"
+    alignItems="center"
+    justify="center"
+    style={{ minHeight: '100vh' }}
+  >
+  
+    <Grid item xs={3}>
+      <Paper className="Modal">
     <form onSubmit={submitHandler}>
       <div>
         <TextField
@@ -101,7 +102,16 @@ export default function EntryForm() {
           onChange={(e) => setContent({ ...content, [e.target.name]: e.target.value })}
         />
       </div>
-      
+      <div>
+        <TextField
+          id="venue"
+          type="text"
+          name="venue"
+          label="venue"
+          value={content.venue}
+          onChange={(e) => setContent({ ...content, [e.target.name]: e.target.value })}
+        />
+      </div>
       <Button disabled={submitting} type="submit">
         {submitting ? "Creating ..." : "Create"}
       </Button>
