@@ -63,3 +63,7 @@ hr {
     margin-right: 0px;
   }
 }
+.Modal {
+  padding: 50px;
+  display: inline-block;
+}

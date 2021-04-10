@@ -9,6 +9,8 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import FilledInput from "@material-ui/core/FilledInput";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 
 export default function EntryForm() {
   const [content, setContent] = useState({
@@ -44,6 +46,17 @@ export default function EntryForm() {
   }
 
   return (
+    <Grid
+    container
+    spacing={0}
+    direction="column"
+    alignItems="center"
+    justify="center"
+    style={{ minHeight: '100vh' }}
+  >
+  
+    <Grid item xs={3}>
+      <Paper className="Modal">
     <form onSubmit={submitHandler}>
       <div>
         <TextField
@@ -100,9 +113,13 @@ export default function EntryForm() {
           onChange={(e) => setContent({ ...content, [e.target.name]: e.target.value })}
         />
       </div>
+      
       <Button disabled={submitting} type="submit">
         {submitting ? "Creating ..." : "Create"}
       </Button>
     </form>
+    </Paper>
+    </Grid>
+    </Grid>
   );
 }
