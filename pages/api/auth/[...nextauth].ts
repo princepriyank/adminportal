@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import NextAuthDynamodb from "next-auth-dynamodb";
+import { db } from "../../../lib/db";
 
 const options = {
   providers: [
@@ -43,9 +44,27 @@ const options = {
   // when an action is performed.
   // https://next-auth.js.org/configuration/callbacks
   callbacks: {
-    // async signIn(user, account, profile) { return true },
+    async signIn(user, account, profile, session) {
+      let data = await db
+        .query(`SELECT * FROM users WHERE email="${profile.email}";`)
+        .catch((e) => {
+          console.log(e);
+        });
+      let a = JSON.parse(JSON.stringify(data));
+      console.log(a);
+      if (a[0]) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     // async redirect(url, baseUrl) { return baseUrl },
-    // async session(session, user) { return session },
+    async session(session, user) {
+      const data = user;
+      data.role = 1;
+      session.user = data;
+      return session;
+    },
     // async jwt(token, user, account, profile, isNewUser) { return token }
   },
 

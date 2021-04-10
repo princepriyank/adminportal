@@ -1,16 +1,12 @@
 import Layout from "../components/layout";
 // import { query } from "../lib/db";
-import Notice from "../components/entry forms/notice-entry";
-import Modal from "../components/modal";
 
 export default function Page(props) {
   return (
     <Layout>
-      <Modal>
-        <Notice />
-      </Modal>
       <h1>NextAuth.js Example</h1>
       <p>
+        {props.res}
         This is an example site to demonstrate how to use{" "}
         <a href={`https://next-auth.js.org`}>NextAuth.js</a> for authentication.
       </p>
