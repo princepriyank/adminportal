@@ -30,7 +30,7 @@ const Home = styled.div`
   }
 `;
 
-export default function Page({ props }) {
+export default async function Page({ props }) {
   const [session, loading] = useSession();
 
   return (
