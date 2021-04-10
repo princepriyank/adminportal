@@ -30,7 +30,7 @@ const Home = styled.div`
   }
 `;
 
-export default function Page({ props }) {
+export default async function Page({ props }) {
   const [session, loading] = useSession();
 
   return (
@@ -48,7 +48,7 @@ export default function Page({ props }) {
             <CardContent>
               <Image src="/logo512.png" width="100" height="100" />
               <Typography className="title" color="textPrimary">
-                Welcome to Admin Portal
+                Welcome to Faculty Portal
               </Typography>
 
               <CardActions className="card">

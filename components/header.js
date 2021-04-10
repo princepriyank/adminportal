@@ -167,11 +167,7 @@ export default function ButtonAppBar() {
                   onClick={handleMenu}
                   color="inherit"
                 >
-                  <span
-                    style={{ backgroundImage: `url(${session.user.image})` }}
-                    className={styles.avatar}
-                  />
-                  {/* <AccountCircle /> */}
+                  <AccountCircle />
                 </IconButton>
                 <Menu
                   id="menu-appbar"
