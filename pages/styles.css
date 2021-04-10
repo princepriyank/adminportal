@@ -1,4 +1,7 @@
-body,html {
+/** @format */
+
+body,
+html {
   font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica",
     "Arial", sans-serif;
   color: #333;
@@ -6,10 +9,9 @@ body,html {
     "Arial", sans-serif;
   line-height: 1.4rem;
   height: 100vh;
-  margin:0;
+  margin: 0;
   padding: 0;
 }
-
 
 hr {
   border: 1px solid #ddd;
@@ -44,6 +46,7 @@ hr {
 .rowmarl3 {
   margin-left: 6vw;
 }
+
 @media (max-width: 768px) {
   .col-6 {
     width: calc(100% - 6vw);
