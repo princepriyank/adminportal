@@ -8,7 +8,6 @@ import Button from "@material-ui/core/Button";
 import { signIn, signout, useSession } from "next-auth/client";
 import CardActions from "@material-ui/core/CardActions";
 import { useRouter } from "next/router";
-import { profile } from "./profile";
 const Home = styled.div`
   width: 100vw;
   height: 100vh;
@@ -65,7 +64,6 @@ export default function Page({ props }) {
         </Home>
       ) : (
         <Layout>
-         <profile/>
         </Layout>
       )}
     </>
