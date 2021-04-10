@@ -8,7 +8,6 @@ import Button from "@material-ui/core/Button";
 import { signIn, signout, useSession } from "next-auth/client";
 import CardActions from "@material-ui/core/CardActions";
 import { useRouter } from "next/router";
-
 const Home = styled.div`
   width: 100vw;
   height: 100vh;
@@ -65,12 +64,7 @@ export default async function Page({ props }) {
         </Home>
       ) : (
         <Layout>
-          <h1>NextAuth.js Example</h1>
-          <p>
-            This is an example site to demonstrate how to use{" "}
-            <a href={`https://next-auth.js.org`}>NextAuth.js</a> for
-            authentication.
-          </p>
+          
         </Layout>
       )}
     </>

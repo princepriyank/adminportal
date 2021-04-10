@@ -67,3 +67,77 @@ hr {
   padding: 50px;
   display: inline-block;
 }
+.facultypage {
+  font-family: "Source Sans Pro";
+  margin-top: 10vw;
+  display: flex;
+  justify-content: space-evenly;
+}
+.facultypage .faculty-img-row {
+  margin-top: 5vh;
+  justify-content: center;
+  text-align: center;
+  font-family: "Source Sans Pro";
+}
+.facultypage .faculty-img-row .facmail {
+  position: absolute;
+  margin-top: -70px;
+  margin-left: 60px;
+}
+.facultypage .faculty-img-row h3 {
+  color: #4e4e4e;
+}
+.facultypage .faculty-img-row .faculty-img-wrap {
+  overflow: hidden;
+  width: 250px;
+  height: 250px;
+  min-width: 250px;
+  border-radius: 50%;
+}
+.facultypage .faculty-img-row .faculty-img-wrap img {
+  width: 100%;
+  height: auto;
+  align-self: center;
+}
+.facultypage .faculty-details-row {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.facultypage .faculty-details-row #dir {
+  line-height: 1.5;
+  letter-spacing: 1px;
+  padding-right: 3vw;
+  padding-top: 50px;
+}
+.facultypage .faculty-details-row .fac-card {
+  width: 90%;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
+  background: #fff;
+  box-shadow: 0px 0px 18px rgba(156, 156, 156, 0.38);
+  border-radius: 5px;
+  padding-left: 5%;
+  padding-bottom: 15px;
+  font-family: "Source Sans Pro";
+  list-style: disc;
+}
+.facultypage .faculty-details-row .fac-card h3 {
+  color: #2f2f2f;
+}
+.facultypage .faculty-details-row .fac-card .factable {
+  overflow: hidden;
+  max-width: 90%;
+  overflow-x: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.facultypage .faculty-details-row .fac-card .factable:-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+.facultypage .faculty-details-row .fac-card table {
+  min-width: 90%;
+  width: 90%;
+}
