@@ -102,10 +102,7 @@ export default function ButtonAppBar() {
                 onClick={handleMenu}
                 color="inherit"
               >
-                <span
-                  style={{ backgroundImage: `url(${session.user.image})` }}
-                  className={styles.avatar}
-                />
+                <AccountCircle />
               </IconButton>
             </ListItemIcon>
             <ListItemText primary={session.user.name} />
@@ -128,7 +125,7 @@ export default function ButtonAppBar() {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar color="secondary" position="static">
         <SwipeableDrawer
           anchor={"left"}
           open={state["left"]}

@@ -8,36 +8,33 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import FilledInput from "@material-ui/core/FilledInput";
-// import { query } from "../lib/db";
+import { query } from "../lib/db";
+import Sheet from "../components/sheet";
+import { Notice } from "../lib/columns.js";
+import styled from "styled-components"
 
-export default function Page(props) {
+const Wrap=styled.div`
+width:100vw;
+display:flex;
+justify-content:center;
+`;
+
+export default function Page({ data }) {
   return (
     <Layout>
-      <h1>Enter</h1>
-      <p>
-        {props.res}
-        This is an example site to demonstrate how to use{" "}
-        <a href={`https://next-auth.js.org`}>NextAuth.js</a> for authentication.
-      </p>
+      <Wrap>
+      <Sheet notice={Notice} data={data} /></Wrap>
     </Layout>
   );
 }
 
 export async function getServerSideProps(context) {
-  // let res = await query(
-  //   `SELECT * FROM users where email="divyap.ug1.cs@nitp.ac.in";`
-  // );
-
-  // console.log(res.length);
-  // if (!res) {
-  //   return {
-  //     redirect: {
-  //       destination: "/",
-  //       permanent: false,
-  //     },
-  //   };
-  // }
+  let res = await query(`SELECT * FROM notices;`).catch((e) => {
+    console.log(e);
+  });
+  console.log(res);
+  const data = JSON.stringify(res);
   return {
-    props: {}, // will be passed to the page component as props
+    props: { data }, // will be passed to the page component as props
   };
 }

@@ -26,6 +26,10 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  closebtn: {
+    position: "absolute",
+    right: 0,
+  },
 }));
 
 export default function SimpleModal({ children }) {
@@ -53,7 +57,7 @@ export default function SimpleModal({ children }) {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-        <Notice />
+        {children}
       </Modal>
     </div>
   );

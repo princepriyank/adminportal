@@ -1,5 +1,10 @@
 .footer {
   margin-top: 2rem;
+  display:flex;
+  justify-content:center;
+  position:absolute;
+  bottom:0;
+  width:100vw;
 }
 
 .navItems {
