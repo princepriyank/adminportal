@@ -1,52 +1,39 @@
-import * as db from "./../api/db";
+import { query } from "../db";
 
-export default interface Subjects {
-	id: string;
-	email: string;
-	user_id: string;
-	subject: string;
+export async function createPublication(params) {
+  await query(
+    `insert into publications where (
+		id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		subject=${params.subject},
+		primary key (id)`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-
-const tableName = () => {
-	return "subjects_teaching";
-};
-
-
-export const getSubjects = async (id) => {
-	try {
-		var params = {
-			TableName: tableName(),
-			Key: {
-				"user_id": id,
-			},
-		};
-		var result = await db.fetchDatafromDatabase2(params);
-
-		return result;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function updatePublication(params) {
+  await query(
+    `update publications where (
+		id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		subject=${params.subject},
+		) where publicaton_id=${params.id}`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-export const getSubjectByUser = async (user_id) => {
-	try {
-		var params = {
-			AttributesToGet: ["subject"],
-			TableName: tableName(),
-			Key: {
-				"user_id": user_id,
-			},
-		};
-		var results = await db.fetchDatafromDatabase2(params);
-		var arr = [];
-		for (let i = 0; i < results.length; i++) {
-			arr.push(results[i].subject)
-		}
-		return arr;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function deletePublication(id) {
+  await query(`delete from publications WHERE id = ${id}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }

@@ -1,54 +1,38 @@
-import * as db from "./../api/db";
+import { query } from "../db";
 
-export default interface Education {
-   id: string;
-   email: string;
-   user_id: string;
-   certification: string;
-   institution: string;
-   passing_year: number;
-
+export async function createEducation(params) {
+  await query(
+    `insert into education where (
+		id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		certification=${params.certification},
+		passing_year=${params.passing_year},
+		primary key (id))`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-const tableName = () => {
-   return "education";
-};
-
-export const getQualification = async (id) => {
-   try {
-      var params = {
-         TableName: tableName(),
-         Key: {
-            "user_id": id,
-         },
-      };
-      var result = await db.fetchDatafromDatabase2(params);
-
-      return result;
-   } catch (err) {
-      console.log(err);
-      return;
-   }
-
+export async function updateEducation(params) {
+  await query(
+    `update education where (
+		certification=${params.certification},
+		passing_year=${params.passing_year},
+		) where id=${params.id}`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-export const getEducationByUser = async (user_id) => {
-   try {
-      var params = {
-         AttributesToGet: ["certification", "institution", "passing_year"],
-         TableName: tableName(),
-         Key: {
-            "user_id": user_id,
-         },
-      };
-      var results = await db.fetchDatafromDatabase2(params);
-      var arr = [];
-      for (let i = 0; i < results.length; i++) {
-         arr.push(results[i])
-      }
-      return arr;
-   } catch (err) {
-      console.log(err);
-      return;
-   }
+export async function deleteEducation(id) {
+  await query(`delete from education WHERE id = ${id}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }

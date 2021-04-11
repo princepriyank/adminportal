@@ -1,31 +1,42 @@
-import * as db from "./../api/db";
+import { query } from "../db";
 
-export default interface Publications {
-	user_id: string;
-	email: string;
-	publication_id: number;
-	publications: string;
+export async function createPublication(params) {
+  await query(
+    `insert into publications where (
+		publication_id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		publication_id=${params.publication_id},
+		publications=${params.publications},
+		primary key (publication_id),
+		unique key (email))`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
+export async function updatePublication(params) {
+  await query(
+    `update publications where (
+		publication_id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		publication_id=${params.publication_id},
+		publications=${params.publications},
+		) where publicaton_id=${params.id}`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
+}
 
-const tableName = () => {
-	return "publications";
-};
-
-
-export const getFileData = async (id) => {
-	try {
-		var params = {
-			TableName: tableName(),
-			Key: {
-				"user_id": id,
-			},
-		};
-		var results = await db.fetchDatafromDatabase2(params);
-		const fileData = results[0].publications
-		return fileData;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function deletePublication(id) {
+  await query(`delete from publications WHERE id = ${id}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }

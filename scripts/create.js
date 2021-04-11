@@ -37,7 +37,7 @@ async function migrate() {
       closeDate bigint,
       important int,
       attachments varchar(1000),
-      userId varchar(35) NOT NULL,
+      user_id varchar(35) NOT NULL,
       PRIMARY KEY (id)
     );`).catch((e) => console.log(e));
 
@@ -50,7 +50,7 @@ async function migrate() {
                 description varchar(1000),
                 image varchar(1000),
                 author varchar(1000),
-                userId varchar(35) NOT NULL,
+                user_id varchar(35) NOT NULL,
                 PRIMARY KEY (id)
             )`).catch((e) => console.log(e));
   
@@ -63,7 +63,7 @@ async function migrate() {
                 description varchar(1000),
                 image varchar(1000),
                 author varchar(1000),
-                userId varchar(35) NOT NULL,
+                user_id varchar(35) NOT NULL,
                 PRIMARY KEY (id)
             )`).catch((e) => console.log(e));
   
@@ -212,7 +212,7 @@ async function migrate() {
                 venue varchar(1000),
                 doclink varchar(500),
                 attachments varchar(1000),
-                userId varchar(35) NOT NULL,
+                user_id varchar(35) NOT NULL,
                 PRIMARY KEY (id))`).catch((e) => console.log(e));
   
   await query(`CREATE TABLE if not exists memberships (

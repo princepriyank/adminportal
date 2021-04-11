@@ -1,55 +1,44 @@
-import * as db from "./../api/db";
+import { query } from "../db";
 
-export default interface PhdCandidates {
-	id: string;
-	user_id: string;
-	email: string;
-	phd_student_name: string;
-	thesis_topic: string;
-	start_year: string;
-	completion_year: string;
+export async function createPhdCandidates(params) {
+  await query(
+    `insert into phd_candidates where (
+		id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		phd_student_name=${params.phd_student_name},
+		thesis_topic=${params.thesis_topic},
+		start_year=${params.start_year},
+		completion_year=${params.completion_year},
+		primary key (publication_id))`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-
-const tableName = () => {
-	return "Phd_Candidates";
-};
-
-
-export const getPhdCandidates = async (id) => {
-	try {
-		var params = {
-			TableName: tableName(),
-			Key: {
-				"user_id": id,
-			},
-		};
-		var result = await db.fetchDatafromDatabase2(params);
-
-		return result;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function updatePhdCandidates(params) {
+  await query(
+    `update phd_candidates where (
+		user_id=${params.user_id},
+		email=${params.email},
+		phd_student_name=${params.phd_student_name},
+		thesis_topic=${params.thesis_topic},
+		start_year=${params.start_year},
+		completion_year=${params.completion_year},
+		) where publicaton_id=${params.id}`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-export const getCandidatesByUser = async (user_id) => {
-	try {
-		var params = {
-			AttributesToGet: ["phd_student_name", "thesis_topic", "start_year", "completion_year"],
-			TableName: tableName(),
-			Key: {
-				"user_id": user_id,
-			},
-		};
-		var results = await db.fetchDatafromDatabase2(params);
-		var arr = [];
-		for (let i = 0; i < results.length; i++) {
-			arr.push(results[i])
-		}
-		return arr;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function deletePhdCandidates(id) {
+  await query(`delete from phd_candidates WHERE id = ${id}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }

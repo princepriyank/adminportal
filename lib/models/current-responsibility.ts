@@ -1,53 +1,36 @@
-import * as db from "./../api/db";
+import { query } from "../db";
 
-export default interface Curr_Responsibility {
-
-   id: string;
-   email: string;
-   user_id: string;
-   curr_responsibility: string;
-
+export async function createCurrentResponsibility(params) {
+  await query(
+    `insert into curr_admin_responsibility where (
+		id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		curr_responsibility=${params.curr_responsibility},
+		primary key (id))`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-const tableName = () => {
-   return "curr_admin_responsibility";
-};
-
-
-export const getAdministration = async (id) => {
-   try {
-      var params = {
-         TableName: tableName(),
-         Key: {
-            "user_id": id,
-         },
-      };
-      var result = await db.fetchDatafromDatabase2(params);
-
-      return result;
-   } catch (err) {
-      console.log(err);
-      return;
-   }
+export async function updateCurrentResponsibility(params) {
+  await query(
+    `update curr_admin_responsibility where (
+		curr_responsibility=${params.curr_responsibility},
+		) where id=${params.id}`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-export const getResponsibilityByUser = async (user_id) => {
-   try {
-      var params = {
-         AttributesToGet: ["curr_responsibility"],
-         TableName: tableName(),
-         Key: {
-            "user_id": user_id,
-         },
-      };
-      var results = await db.fetchDatafromDatabase2(params);
-      var arr = [];
-      for (let i = 0; i < results.length; i++) {
-         arr.push(results[i].curr_responsibility)
-      }
-      return arr;
-   } catch (err) {
-      console.log(err);
-      return;
-   }
+export async function deleteCurrentResponsibility(id) {
+  await query(`delete from curr_admin_responsibility WHERE id = ${id}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }

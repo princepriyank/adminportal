@@ -1,52 +1,36 @@
-import * as db from "./../api/db";
+import { query } from "../db";
 
-export default interface Workexpreience {
-	id: string;
-	usre_id: string;
-	email: string;
-	work_experiences: string;
+export async function createWorkExperience(params) {
+  await query(
+    `insert into work_experience where (
+		id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		work_experiences=${params.work_experiences},
+		primary key (id))`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-
-const tableName = () => {
-	return "Work_Experience";
-};
-
-
-export const getWorkExperience = async (id) => {
-	try {
-		var params = {
-			TableName: tableName(),
-			Key: {
-				"user_id": id,
-			},
-		};
-		var result = await db.fetchDatafromDatabase2(params);
-
-		return result;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function updateWorkExperience(params) {
+  await query(
+    `update work_experience where (
+		work_experiences=${params.work_experiences},
+		) where id=${params.id}`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-export const getWorkExperienceByUser = async (user_id) => {
-	try {
-		var params = {
-			AttributesToGet: ["subject"],
-			TableName: tableName(),
-			Key: {
-				"user_id": user_id,
-			},
-		};
-		var results = await db.fetchDatafromDatabase2(params);
-		var arr = [];
-		for (let i = 0; i < results.length; i++) {
-			arr.push(results[i].work_experiences)
-		}
-		return arr;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function deleteWorkExperience(id) {
+  await query(`delete from work_experience WHERE id = ${id}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }

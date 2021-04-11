@@ -1,54 +1,38 @@
-import * as db from "./../api/db";
+import { query } from "../db";
 
-export default interface Memberships {
-
-   id: string;
-   email: string;
-   user_id: string;
-   membership_id: string;
-   membership_society: string;
-
+export async function createMembership(params) {
+  await query(
+    `insert into memberships where (
+		id=${params.id},
+		user_id=${params.user_id},
+      email=${params.email},
+      membership_id=${params.membership_id},
+      membership_society=${params.membership_society},
+		primary key (id))`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-const tableName = () => {
-   return "memberships";
-};
-
-export const getMemberships = async (id) => {
-   try {
-      var params = {
-         TableName: tableName(),
-         Key: {
-            "user_id": id,
-         },
-      };
-      var result = await db.fetchDatafromDatabase2(params);
-
-      return result;
-   } catch (err) {
-      console.log(err);
-      return;
-   }
-
+export async function updateMembership(params) {
+  await query(
+    `update memberships where (
+    membership_id=${params.membership_id},
+    membership_society=${params.membership_society},
+		) where id=${params.id}`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-export const getMembershipsByUser = async (user_id) => {
-   try {
-      var params = {
-         AttributesToGet: ["membership_id", "membership_society"],
-         TableName: tableName(),
-         Key: {
-            "user_id": user_id,
-         },
-      };
-      var results = await db.fetchDatafromDatabase2(params);
-      var arr = [];
-      for (let i = 0; i < results.length; i++) {
-         arr.push(results[i])
-      }
-      return arr;
-   } catch (err) {
-      console.log(err);
-      return;
-   }
+export async function deleteMembership(id) {
+  await query(`delete from memberships WHERE id = ${id}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }

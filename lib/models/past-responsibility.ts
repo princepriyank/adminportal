@@ -1,52 +1,36 @@
-import * as db from "./../api/db";
+import { query } from "../db";
 
-export default interface Past_Responsibility {
-	id: string;
-	email: string;
-	user_id: string;
-	past_responsibility: string;
+export async function createPastResponsibility(params) {
+  await query(
+    `insert into past_admin_responsibility where (
+		id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		past_responsibility=${params.past_responsibility},
+		primary key (id))`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-
-const tableName = () => {
-	return "past_admin_responsibility";
-};
-
-
-export const getReponsibility = async (id) => {
-	try {
-		var params = {
-			TableName: tableName(),
-			Key: {
-				"user_id": id,
-			},
-		};
-		var result = await db.fetchDatafromDatabase2(params);
-
-		return result;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function updatePastResponsibility(params) {
+  await query(
+    `update past_admin_responsibility where (
+		past_responsibility=${params.past_responsibility},
+		) where id=${params.id}`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-export const getResponsibilityByUser = async (user_id) => {
-	try {
-		var params = {
-			AttributesToGet: ["past_responsibility"],
-			TableName: tableName(),
-			Key: {
-				"user_id": user_id,
-			},
-		};
-		var results = await db.fetchDatafromDatabase2(params);
-		var arr = [];
-		for (let i = 0; i < results.length; i++) {
-			arr.push(results[i].past_responsibility)
-		}
-		return arr;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function deletePastResponsibility(id) {
+  await query(`delete from past_admin_responsibility WHERE id = ${id}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }

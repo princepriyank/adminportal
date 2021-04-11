@@ -1,52 +1,38 @@
-import * as db from "./../api/db";
+import { query } from "../db";
 
-export default interface Professional_Service {
-	id: string;
-	user_id: string;
-	email: string;
-	services: string;
+export async function createProfessionalService(params) {
+  await query(
+    `insert into Professional_Service where (
+		id=${params.id},
+		user_id=${params.user_id},
+		email=${params.email},
+		services=${params.services},
+		primary key (id)`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-
-const tableName = () => {
-	return "Professional_Service";
-};
-
-
-export const getProfessionalService = async (id) => {
-	try {
-		var params = {
-			TableName: tableName(),
-			Key: {
-				"user_id": id,
-			},
-		};
-		var result = await db.fetchDatafromDatabase2(params);
-
-		return result;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function updateProfessionalService(params) {
+  await query(
+    `update Professional_Service where (
+		user_id=${params.user_id},
+		email=${params.email},
+		services=${params.services},
+		) where publicaton_id=${params.id}`
+  )
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
 
-export const getCandidatesByUser = async (user_id) => {
-	try {
-		var params = {
-			AttributesToGet: ["services"],
-			TableName: tableName(),
-			Key: {
-				"user_id": user_id,
-			},
-		};
-		var results = await db.fetchDatafromDatabase2(params);
-		var arr = [];
-		for (let i = 0; i < results.length; i++) {
-			arr.push(results[i].services)
-		}
-		return arr;
-	} catch (err) {
-		console.log(err);
-		return;
-	}
+export async function deleteProfessionalService(id) {
+  await query(`delete from Professional_Service WHERE id = ${id}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => console.log(e));
 }
