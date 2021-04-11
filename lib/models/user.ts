@@ -1,6 +1,6 @@
 import { query } from "../db";
 
-export async function createEducation(params) {
+export async function createUser(params) {
   await query(
     `insert into users where (
 		id=${params.id},
@@ -19,7 +19,7 @@ export async function createEducation(params) {
     .catch((e) => console.log(e));
 }
 
-export async function updateEducation(params) {
+export async function updateUser(params) {
   await query(
     `update users where (
 		name=${params.name},
@@ -37,7 +37,7 @@ export async function updateEducation(params) {
     .catch((e) => console.log(e));
 }
 
-export async function deleteEducation(id) {
+export async function deleteUser(id) {
   await query(`delete from users WHERE id = ${id}`)
     .then((res) => {
       return res;

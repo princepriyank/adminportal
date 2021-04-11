@@ -1,8 +1,8 @@
 import { query } from "../db";
 
-export async function createPublication(params) {
+export async function createSubject(params) {
   await query(
-    `insert into publications where (
+    `insert into subjects_teaching where (
 		id=${params.id},
 		user_id=${params.user_id},
 		email=${params.email},
@@ -15,9 +15,9 @@ export async function createPublication(params) {
     .catch((e) => console.log(e));
 }
 
-export async function updatePublication(params) {
+export async function updateSubject(params) {
   await query(
-    `update publications where (
+    `update subjects_teaching where (
 		id=${params.id},
 		user_id=${params.user_id},
 		email=${params.email},
@@ -30,8 +30,8 @@ export async function updatePublication(params) {
     .catch((e) => console.log(e));
 }
 
-export async function deletePublication(id) {
-  await query(`delete from publications WHERE id = ${id}`)
+export async function deleteSubject(id) {
+  await query(`delete from subjects_teaching WHERE id = ${id}`)
     .then((res) => {
       return res;
     })
