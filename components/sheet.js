@@ -11,7 +11,6 @@ import TextField from "@material-ui/core/TextField";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import SearchIcon from "@material-ui/icons/Search";
 import styled from "styled-components";
-import { notice } from "../lib/models/notice";
 import Grid from "@material-ui/core/Grid";
 
 const Sheet = styled(Paper)`

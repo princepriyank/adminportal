@@ -1,20 +1,6 @@
 import { NextApiHandler } from "next";
+import { query } from "../../../lib/db";
 import { getSession } from "next-auth/client";
-import { deleteEvent } from "../../../lib/models/event";
-import { deleteInnovation } from "../../../lib/models/innovation";
-import { deleteNews } from "../../../lib/models/news";
-import { deleteUser } from "../../../lib/models/user";
-import { deleteNotice } from "../../../lib/models/notice";
-import { deleteSubject } from "../../../lib/models/subjects";
-import { deleteCurrentResponsibility } from "../../../lib/models/current-responsibility";
-import { deletePastResponsibility } from "../../../lib/models/past-responsibility";
-import { deleteWorkExperience } from "../../../lib/models/workexperience";
-import { deletePublication } from "../../../lib/models/publications";
-import { deleteProject } from "../../../lib/models/project";
-import { deleteProfessionalService } from "../../../lib/models/professionalservice";
-import { deleteEducation } from "../../../lib/models/education";
-import { deletePhdCandidates } from "../../../lib/models/phdcandidates";
-import { deleteFacultyImage } from "../../../lib/models/image";
 
 const handler = async (req, res) => {
   const session = await getSession({ req });
@@ -24,35 +10,41 @@ const handler = async (req, res) => {
     try {
       const params = req.body;
       if (type == "notice") {
-        deleteNotice(params);
+        await query(`delete from notices WHERE id = ${params}`);
       } else if (type == "event") {
-        deleteEvent(params);
+        await query(`delete from events WHERE id = ${params}`);
       } else if (type == "innovation") {
-        deleteInnovation(params);
+        await query(`delete from innovation WHERE id = ${params}`);
       } else if (type == "news") {
-        deleteNews(params);
+        await query(`delete from news WHERE id = ${params}`);
       } else if (type == "user") {
-        deleteUser(params);
+        await query(`delete from users WHERE id = ${params}`);
+      } else if (type == "memberships") {
+        await query(`delete from memberships WHERE id = ${params}`);
       } else if (type == "image") {
-        deleteFacultyImage(params);
+        await query(`delete from faculty_image WHERE email = "${params}"`);
       } else if (type == "current-responsibility") {
-        deleteCurrentResponsibility(params);
+        await query(
+          `delete from curr_admin_responsibility WHERE id = ${params}`
+        );
       } else if (type == "past-responsibility") {
-        deletePastResponsibility(params);
+        await query(
+          `delete from past_admin_responsibility WHERE id = ${params}`
+        );
       } else if (type == "workexperience") {
-        deleteWorkExperience(params);
+        await query(`delete from work_experience WHERE id = ${params}`);
       } else if (type == "subjects") {
-        deleteSubject(params);
+        await query(`delete from subjects_teaching WHERE id = ${params}`);
       } else if (type == "publications") {
-        deletePublication(params);
+        await query(`delete from publications WHERE id = ${params}`);
       } else if (type == "project") {
-        deleteProject(params);
+        await query(`delete from project WHERE id = ${params}`);
       } else if (type == "professionalservice") {
-        deleteProfessionalService(params);
+        await query(`delete from Professional_Service WHERE id = ${params}`);
       } else if (type == "education") {
-        deleteEducation(params);
+        await query(`delete from education WHERE id = ${params}`);
       } else if (type == "phdcandidates") {
-        deletePhdCandidates(params);
+        await query(`delete from phd_candidates WHERE id = ${params}`);
       } else {
         res.json({ message: "Could not find matching requests" });
       }
