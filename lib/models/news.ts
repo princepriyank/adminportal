@@ -12,7 +12,7 @@ export async function createNews(params) {
       image=${params.image},
       author=${params.author},
 		important=${params.important},
-		user_id=${params.user_id},
+		email=${params.email},
       primary key(id))`
   )
     .then((res) => {
@@ -29,11 +29,11 @@ export async function updateNews(params) {
 		timestamp=${params.timestamp},
 		openDate=${params.openDate},
 		closeDate=${params.closeDate},
-      description=${params.description},
-      image=${params.image},
-      author=${params.author},
+    description=${params.description},
+    image=${params.image},
+    author=${params.author},
 		important=${params.important},
-		userId=${params.user_id},
+	  email=${params.email},
       ) where id=${params.id}`
   )
     .then((res) => {

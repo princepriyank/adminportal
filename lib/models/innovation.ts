@@ -1,19 +1,19 @@
 import { query } from "../db";
 
-export async function createEvent(params) {
+export async function createInnovation(params) {
   await query(
-    `insert into events where (
+    `insert into notices where (
 		id=${params.id},
 		title=${params.title},
 		timestamp=${params.timestamp},
 		openDate=${params.openDate},
 		closeDate=${params.closeDate},
-      venue=${params.venue},
-      doclink=${params.doclink}
+      description=${params.description},
+      image=${params.image},
+      author=${params.author},
 		important=${params.important},
-		attachments=${params.attachments},
 		email=${params.email},
-		primary key (id))`
+      primary key(id))`
   )
     .then((res) => {
       return res;
@@ -21,19 +21,20 @@ export async function createEvent(params) {
     .catch((e) => console.log(e));
 }
 
-export async function updateEvent(params) {
+export async function updateInnovation(params) {
   await query(
-    `update events set (
+    `update innovation where (
+		id=${params.id},
 		title=${params.title},
 		timestamp=${params.timestamp},
 		openDate=${params.openDate},
 		closeDate=${params.closeDate},
-      venue=${params.venue},
-      doclink=${params.doclink}
+    description=${params.description},
+    image=${params.image},
+    author=${params.author},
 		important=${params.important},
-		attachments=${params.attachments},
-		email=${params.email},
-		) where id=${params.id}`
+	  email=${params.email},
+      ) where id=${params.id}`
   )
     .then((res) => {
       return res;
@@ -41,8 +42,8 @@ export async function updateEvent(params) {
     .catch((e) => console.log(e));
 }
 
-export async function deleteEvent(id) {
-  await query(`delete from events WHERE id = ${id}`)
+export async function deleteInnovation(id) {
+  await query(`delete from innovation WHERE id = ${id}`)
     .then((res) => {
       return res;
     })

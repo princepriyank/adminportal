@@ -10,7 +10,7 @@ export async function createNotice(params) {
 		closeDate=${params.closeDate},
 		important=${params.important},
 		attachments=${params.attachments},
-		user_id=${params.user_id},
+		email=${params.email},
 		primary key (id))`
   ).then(res => {
 	  return res
@@ -27,7 +27,7 @@ export async function updateNotice(params) {
 		closeDate=${params.closeDate},
 		important=${params.important},
 		attachments=${params.attachments},
-		user_id=${params.user_id}
+		email=${params.email}
 		) where id=${params.id}`
   )
     .then((res) => {

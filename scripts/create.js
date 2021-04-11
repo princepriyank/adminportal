@@ -37,7 +37,7 @@ async function migrate() {
       closeDate bigint,
       important int,
       attachments varchar(1000),
-      user_id varchar(35) NOT NULL,
+      email varchar(50) NOT NULL,
       PRIMARY KEY (id)
     );`).catch((e) => console.log(e));
 
@@ -50,7 +50,7 @@ async function migrate() {
                 description varchar(1000),
                 image varchar(1000),
                 author varchar(1000),
-                user_id varchar(35) NOT NULL,
+                email varchar(50) NOT NULL,
                 PRIMARY KEY (id)
             )`).catch((e) => console.log(e));
   
@@ -63,15 +63,15 @@ async function migrate() {
                 description varchar(1000),
                 image varchar(1000),
                 author varchar(1000),
-                user_id varchar(35) NOT NULL,
-                PRIMARY KEY (id)
+                email varchar(50) NOT NULL,
+                PRIMARY KEY (email)
             )`).catch((e) => console.log(e));
   
   await query(`create table if not exists faculty_image (
                 user_id int,
                 email varchar(50),
                 image MEDIUMBLOB,
-                PRIMARY KEY(user_id),
+                PRIMARY KEY(email),
                 UNIQUE KEY(email)
             )`).catch((e) => console.log(e));
   
@@ -91,13 +91,13 @@ async function migrate() {
             thesis_topic text NOT NULL,
             start_year varchar(10) NOT NULL,
             completion_year varchar(10) NOT NULL,
-            PRIMARY KEY(id)
+            PRIMARY KEY(email)
         )AUTO_INCREMENT=120000`).catch((e) => console.log(e));
   
   await query(`create table if not exists Professional_Service (
             id int NOT NULL AUTO_INCREMENT,
             user_id int NOT NULL,
-            email varchar(250) NOT NULL,
+            email varchar(50) NOT NULL,
             services text NOT NULL,
             PRIMARY KEY(id)
         )AUTO_INCREMENT=140000;`).catch((e) => console.log(e));
@@ -212,7 +212,7 @@ async function migrate() {
                 venue varchar(1000),
                 doclink varchar(500),
                 attachments varchar(1000),
-                user_id varchar(35) NOT NULL,
+                email varchar(50) NOT NULL,
                 PRIMARY KEY (id))`).catch((e) => console.log(e));
   
   await query(`CREATE TABLE if not exists memberships (
