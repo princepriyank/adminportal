@@ -8,12 +8,6 @@ import Button from "@material-ui/core/Button";
 import { signIn, signout, useSession } from "next-auth/client";
 import CardActions from "@material-ui/core/CardActions";
 import { useRouter } from "next/router";
-import Modal from "../components/modal";
-import Notice from "../components/entry forms/notice-entry";
-import News from "../components/entry forms/news-entry";
-import { query } from "../lib/db";
-import Profilepage from "../components/profile";
-import { getSession } from "next-auth/client";
 
 const Home = styled.div`
   width: 100vw;
@@ -36,7 +30,7 @@ const Home = styled.div`
   }
 `;
 
-export default function Page({result}) {
+export default function Page({ props }) {
   const [session, loading] = useSession();
 
   return (
@@ -70,59 +64,34 @@ export default function Page({result}) {
           </Card>
         </Home>
       ) : (
-          <Layout>
-          <Profilepage details={result} />
+        <Layout>
+          <h1>NextAuth.js Example</h1>
+          <p>
+            This is an example site to demonstrate how to use{" "}
+            <a href={`https://next-auth.js.org`}>NextAuth.js</a> for
+            authentication.
+          </p>
         </Layout>
       )}
     </>
   );
 }
 
-export async function getServerSideProps({ req, res }) {
-    const session = await getSession({ req });
+export async function getServerSideProps(context) {
+  // let res = await query(
+  //   `SELECT * FROM users where email="divyap.ug1.cs@nitp.ac.in";`
+  // );
 
-  if (session) {
-    let details = {};
-    console.log(session.user.email)
-    let data = await query(
-      `SELECT * FROM users WHERE email="${session.user.email}";`
-    ).catch((e) => {
-      console.log(e);
-    });
-    let profile = JSON.parse(JSON.stringify(data))[0];
-    details["profile"]=profile
-    let array = [
-      "curr_admin_responsibility",
-      "education",
-      "memberships",
-      "past_admin_responsibility",
-      "phd_candidates",
-      "professional_service",
-      "project",
-      "publications",
-      "subjects_teaching",
-      "work_experience",
-    ];
-    console.log(profile.id);
-    array.forEach(async(element) => {
-      let data = await query(
-        `SELECT * FROM ${element} WHERE user_id=${profile.id};`
-      ).catch((e) => {
-        console.log(e);
-      });
-      let tmp = JSON.parse(JSON.stringify(data))[0];
-      details[element] = tmp;
-    });
-    console.log(details);
-    let result=JSON.stringify(details);
-    console.log(result);
-    
-    return {
-      props: { result }, // will be passed to the page component as props
-    };
-  } else {
-    return {
-      props: {}, // will be passed to the page component as props
-    };
-  }
+  // console.log(res.length);
+  // if (!res) {
+  //   return {
+  //     redirect: {
+  //       destination: "/",
+  //       permanent: false,
+  //     },
+  //   };
+  // }
+  return {
+    props: {}, // will be passed to the page component as props
+  };
 }
