@@ -28,176 +28,178 @@ import PermIdentityIcon from "@material-ui/icons/PermIdentity";
 import CallToActionIcon from "@material-ui/icons/CallToAction";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
-  list: {
-    width: 250,
-  },
-  fullList: {
-    width: "auto",
-  },
+	root: {
+		flexGrow: 1,
+	},
+	menuButton: {
+		marginRight: theme.spacing(2),
+	},
+	title: {
+		flexGrow: 1,
+	},
+	list: {
+		width: 250,
+	},
+	fullList: {
+		width: "auto",
+	},
 }));
 
 export default function ButtonAppBar() {
-  const classes = useStyles();
-  const [session, loading] = useSession();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+	const classes = useStyles();
+	const [session, loading] = useSession();
+	const [anchorEl, setAnchorEl] = React.useState(null);
+	const open = Boolean(anchorEl);
 
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
+	const handleChange = (event) => {
+		setAuth(event.target.checked);
+	};
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+	const handleMenu = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
-  const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
+	const [state, setState] = React.useState({
+		top: false,
+		left: false,
+		bottom: false,
+		right: false,
+	});
 
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
+	const toggleDrawer = (anchor, open) => (event) => {
+		if (
+			event &&
+			event.type === "keydown" &&
+			(event.key === "Tab" || event.key === "Shift")
+		) {
+			return;
+		}
 
-    setState({ ...state, [anchor]: open });
-  };
+		setState({ ...state, [anchor]: open });
+	};
 
-  const list = (anchor) => (
-    <div
-      className={clsx(classes.list, {
-        [classes.fullList]: anchor === "top" || anchor === "bottom",
-      })}
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-    >
-      <List>
-        {session && (
-          <ListItem button key={session.user.name}>
-            <ListItemIcon>
-              <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-            </ListItemIcon>
-            <ListItemText primary={session.user.name} />
-          </ListItem>
-        )}
-      </List>
-      <Divider />
-      <List>
-        {["Profile", "Events", "Notice"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon></ListItemIcon>
-            <Link href={`/${text.toLowerCase()}`}>
-              <ListItemText primary={text} />
-            </Link>
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  );
+	const list = (anchor) => (
+		<div
+			className={clsx(classes.list, {
+				[classes.fullList]: anchor === "top" || anchor === "bottom",
+			})}
+			role="presentation"
+			onClick={toggleDrawer(anchor, false)}
+			onKeyDown={toggleDrawer(anchor, false)}
+		>
+			<List>
+				{session && (
+					<ListItem button key={session.user.name}>
+						<ListItemIcon>
+							<IconButton
+								aria-label="account of current user"
+								aria-controls="menu-appbar"
+								aria-haspopup="true"
+								onClick={handleMenu}
+								color="inherit"
+							>
+								<AccountCircle />
+							</IconButton>
+						</ListItemIcon>
+						<ListItemText primary={session.user.name} />
+					</ListItem>
+				)}
+			</List>
+			<Divider />
+			<List>
+				{["Profile", "Events", "Notice", "News", "Innovation"].map(
+					(text, index) => (
+						<ListItem button key={text}>
+							<ListItemIcon></ListItemIcon>
+							<Link href={`/${text.toLowerCase()}`}>
+								<ListItemText primary={text} />
+							</Link>
+						</ListItem>
+					)
+				)}
+			</List>
+		</div>
+	);
 
-  return (
-    <div className={classes.root}>
-      <AppBar color="secondary" position="static">
-        <SwipeableDrawer
-          anchor={"left"}
-          open={state["left"]}
-          onClose={toggleDrawer("left", false)}
-          onOpen={toggleDrawer("left", true)}
-        >
-          {list("left")}
-        </SwipeableDrawer>
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-            onClick={toggleDrawer("left", true)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" className={classes.title}>
-            Admin Portal
-          </Typography>
-          {!session && (
-            <>
-              <Button color="inherit" onClick={() => signIn("google")}>
-                Login
-              </Button>
-            </>
-          )}
-          {session && (
-            <>
-              <div>
-                <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={open}
-                  onClose={handleClose}
-                >
-                  <MenuItem>
-                    <Link href="/user">Profile</Link>
-                  </MenuItem>
-                  <MenuItem
-                    onClick={(e) => {
-                      e.preventDefault();
-                      signout();
-                    }}
-                  >
-                    Sign Out
-                  </MenuItem>
-                </Menu>
-              </div>
-            </>
-          )}
-        </Toolbar>
-      </AppBar>
-    </div>
-  );
+	return (
+		<div className={classes.root}>
+			<AppBar color="secondary" position="static">
+				<SwipeableDrawer
+					anchor={"left"}
+					open={state["left"]}
+					onClose={toggleDrawer("left", false)}
+					onOpen={toggleDrawer("left", true)}
+				>
+					{list("left")}
+				</SwipeableDrawer>
+				<Toolbar>
+					<IconButton
+						edge="start"
+						className={classes.menuButton}
+						color="inherit"
+						aria-label="menu"
+						onClick={toggleDrawer("left", true)}
+					>
+						<MenuIcon />
+					</IconButton>
+					<Typography variant="h6" className={classes.title}>
+						Admin Portal
+					</Typography>
+					{!session && (
+						<>
+							<Button color="inherit" onClick={() => signIn("google")}>
+								Login
+							</Button>
+						</>
+					)}
+					{session && (
+						<>
+							<div>
+								<IconButton
+									aria-label="account of current user"
+									aria-controls="menu-appbar"
+									aria-haspopup="true"
+									onClick={handleMenu}
+									color="inherit"
+								>
+									<AccountCircle />
+								</IconButton>
+								<Menu
+									id="menu-appbar"
+									anchorEl={anchorEl}
+									anchorOrigin={{
+										vertical: "top",
+										horizontal: "right",
+									}}
+									keepMounted
+									transformOrigin={{
+										vertical: "top",
+										horizontal: "right",
+									}}
+									open={open}
+									onClose={handleClose}
+								>
+									<MenuItem>
+										<Link href="/user">Profile</Link>
+									</MenuItem>
+									<MenuItem
+										onClick={(e) => {
+											e.preventDefault();
+											signout();
+										}}
+									>
+										Sign Out
+									</MenuItem>
+								</Menu>
+							</div>
+						</>
+					)}
+				</Toolbar>
+			</AppBar>
+		</div>
+	);
 }
