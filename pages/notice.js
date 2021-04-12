@@ -4,7 +4,7 @@ import { query } from "../lib/db";
 import Sheet from "../components/sheet";
 import { Notice } from "../lib/columns.js";
 import styled from "styled-components";
-import DataDisplay from "./display-notices";
+import DataDisplay from "../components/display-notices";
 
 const Wrap = styled.div`
 	width: 90%;
@@ -28,7 +28,7 @@ export async function getServerSideProps(context) {
 	let res = await query(`SELECT * FROM notices;`).catch((e) => {
 		console.log(e);
 	});
-	console.log(res);
+	// console.log(res);
 	const data = JSON.stringify(res);
 	return {
 		props: { data }, // will be passed to the page component as props
