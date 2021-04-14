@@ -31,7 +31,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/api/update/[type].js", "components/display-notices.jsx"  ],
+, "pages/api/update/[type].js", "components/display-notices.js"  ],
   "exclude": [
     "node_modules"
   ]

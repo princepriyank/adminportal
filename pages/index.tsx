@@ -8,6 +8,8 @@ import Button from "@material-ui/core/Button";
 import { signIn, signout, useSession } from "next-auth/client";
 import CardActions from "@material-ui/core/CardActions";
 import Profilepage from "@/components/profile";
+import { getSession } from "next-auth/client";
+import { query } from "@/lib/db";
 
 const Home = styled.div`
   width: 100vw;
