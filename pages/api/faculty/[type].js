@@ -25,16 +25,40 @@ const handler = async (req, res) => {
     `
       );
     }
-      else {
-        results = await query(
-          `
-      select * from users where id=${type}
-    `
-        );
+    else {
+      results = {};
+      let array = [
+        "curr_admin_responsibility",
+        "education",
+        "memberships",
+        "past_admin_responsibility",
+        "phd_candidates",
+        "professional_service",
+        "project",
+        "publications",
+        "subjects_teaching",
+        "work_experience",
+      ];
+      let data = await query(
+        `SELECT * FROM users WHERE email="${type}";`
+      ).catch((e) => {
+        console.log(e);
+      });
+      let profile = JSON.parse(JSON.stringify(data))[0];
+      results["profile"] = profile
+      array.forEach(async (element) => {
+        let data = await query(
+          `SELECT * FROM ${element} WHERE user_id=${profile.id};`
+        ).catch((e) => {
+          console.log(e);
+        });
+        let tmp = JSON.parse(JSON.stringify(data))[0];
+        results[element] = tmp;
+      });
       }
     let array = JSON.parse(JSON.stringify(results));
     console.log(array);
-    return res.json(array.reverse());
+    return res.json(array);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

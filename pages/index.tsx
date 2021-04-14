@@ -7,13 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { signIn, signout, useSession } from "next-auth/client";
 import CardActions from "@material-ui/core/CardActions";
-import { useRouter } from "next/router";
-import Modal from "@/components/modal";
-import Notice from "@/components/entry forms/notice-entry";
-import News from "@/components/entry forms/news-entry";
-import { query } from "@/lib/db";
 import Profilepage from "@/components/profile";
-import { getSession } from "next-auth/client";
 
 const Home = styled.div`
   width: 100vw;
@@ -38,7 +32,7 @@ const Home = styled.div`
 
 export default function Page({result}) {
   const [session, loading] = useSession();
-
+  
   return (
     <>
       {!session ? (
