@@ -15,6 +15,7 @@ import {
 	Edit,
 	LocationOn,
 	Link,
+	Description,
 	Flag,
 	VisibilityOff,
 } from "@material-ui/icons";
@@ -67,7 +68,7 @@ const AddAttachments = () => {
 	return (
 		<>
 			<Button variant="contained" color="primary" onClick={() => handleAdd()}>
-				+ Add Attachments
+				+ Add Image
 			</Button>
 			{fields.map((field, idx) => {
 				return (
@@ -78,7 +79,11 @@ const AddAttachments = () => {
 							onChange={(e) => handleChange(idx, e)}
 							style={{ margin: `8px` }}
 						/>
-						<TextField type="file" style={{ margin: `8px` }} />
+						<TextField
+							type="file"
+							style={{ margin: `8px` }}
+							inputProps={{ accept: "image/*" }}
+						/>
 						<Button
 							type="button"
 							onClick={() => handleRemove(idx)}
@@ -114,7 +119,7 @@ const AddForm = ({ handleClose, modal }) => {
 		<>
 			<Dialog open={modal} onClose={handleClose}>
 				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Add Event
+					Add Innovations
 				</DialogTitle>
 				<DialogContent>
 					<TextField
@@ -124,6 +129,14 @@ const AddForm = ({ handleClose, modal }) => {
 						type="text"
 						fullWidth
 						placeholder={"title"}
+					/>
+					<TextField
+						margin="dense"
+						id="desc"
+						label="Description"
+						type="text"
+						fullWidth
+						placeholder={"Description"}
 					/>
 					<TextField
 						margin="dense"
@@ -145,22 +158,22 @@ const AddForm = ({ handleClose, modal }) => {
 							shrink: true,
 						}}
 					/>
-					<TextField
+					{/* <TextField
 						margin="dense"
 						id="venue"
 						label="Venue"
 						type="text"
 						fullWidth
-						placeholder={"Venue of Event"}
-					/>
-					<TextField
+						placeholder={"Venue of event"}
+					/> */}
+					{/* <TextField
 						margin="dense"
 						id="Doclink"
 						label="Registration form link (like: Google Doc, etc.) "
 						type="text"
 						fullWidth
 						placeholder={"Leave it blank if not available"}
-					/>
+					/> */}
 					<h2>Attachments</h2>
 					<AddAttachments />
 					{/* <a href={data.attachments} target="__blank">
@@ -191,7 +204,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 		<>
 			<Dialog open={modal} onClose={handleClose}>
 				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Edit Event
+					Edit Innovations
 					<Delete color="secondary" />
 				</DialogTitle>
 				<DialogContent>
@@ -227,21 +240,13 @@ const EditForm = ({ data, handleClose, modal }) => {
 					/>
 					<TextField
 						margin="dense"
-						id="venue"
-						label="Venue"
+						id="description"
+						label="Description"
 						type="text"
 						fullWidth
-						defaultValue={data.venue}
+						defaultValue={data.description}
 					/>
-					<TextField
-						margin="dense"
-						id="Doclink"
-						label="Registration form link (like: Google Doc, etc.) "
-						type="text"
-						fullWidth
-						defaultValue={data.doclink}
-					/>
-					<h2>Attachments</h2>
+					{/* <h2>Attachments</h2>
 					<TextField
 						id="attachments"
 						margin="dense"
@@ -253,7 +258,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 					/>
 					<a href={data.attachments} target="__blank">
 						<Link />
-					</a>
+					</a> */}
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleClose} color="primary">
@@ -265,9 +270,28 @@ const EditForm = ({ data, handleClose, modal }) => {
 	);
 };
 
+const DescriptionModal = ({ handleClose, modal, data }) => {
+	return (
+		<>
+			<Dialog
+				onClose={handleClose}
+				aria-labelledby="customized-dialog-title"
+				open={modal}
+			>
+				<DialogTitle id="customized-dialog-title" onClose={handleClose}>
+					Description
+				</DialogTitle>
+				<DialogContent dividers>
+					<Typography gutterBottom>{data.description}</Typography>
+				</DialogContent>
+			</Dialog>
+		</>
+	);
+};
+
 const DataDisplay = (props) => {
 	const classes = useStyles();
-	const [details, setDetails] = useState(JSON.parse(props.data));
+	const [details, setDetails] = useState(props.data);
 
 	const [addModal, setAddModal] = useState(false);
 	const addModalOpen = () => {
@@ -281,7 +305,7 @@ const DataDisplay = (props) => {
 		<div>
 			<header>
 				<Typography variant="h4" style={{ margin: `15px 0` }}>
-					Recent Events
+					Recent Innovations
 				</Typography>
 				<Button variant="contained" color="primary" onClick={addModalOpen}>
 					ADD +
@@ -299,6 +323,7 @@ const DataDisplay = (props) => {
 					openDate = dd + "/" + mm + "/" + yyyy;
 
 					const [editModal, setEditModal] = useState(false);
+					const [descriptionModal, setDescriptionModal] = useState(false);
 
 					const editModalOpen = () => {
 						setEditModal(true);
@@ -308,19 +333,27 @@ const DataDisplay = (props) => {
 						setEditModal(false);
 					};
 
+					const descModalOpen = () => {
+						setDescriptionModal(true);
+					};
+
+					const handleCloseDescModal = () => {
+						setDescriptionModal(false);
+					};
+
 					return (
 						<React.Fragment key={detail.id}>
 							<Grid item xs={12} sm={6} lg={9}>
 								<Paper className={classes.paper}>
 									<span className={classes.truncate}>{detail.title}</span>
-									{detail.attachments && (
+									{detail.image && (
 										<React.Fragment>
 											<Flag />
-											<a href={detail.attachments}>Download</a>
+											<a href={detail.image}>Image</a>
 										</React.Fragment>
 									)}
 									<LocationOn color="secondary" />
-									{detail.venue}
+									NIT PATNA
 									<span style={{ float: "right" }}>{openDate}</span>
 								</Paper>
 							</Grid>
@@ -353,13 +386,17 @@ const DataDisplay = (props) => {
 							<Grid item xs={4} sm={2} lg={1}>
 								<Paper
 									className={classes.paper}
-									style={{ textAlign: `center` }}
+									style={{ textAlign: `center`, cursor: `pointer` }}
+									onClick={descModalOpen}
 								>
-									<a href={detail.doclink} style={{ textDecoration: `none` }}>
-										<Link className={classes.icon} />
-										<span>Reg Link</span>
-									</a>
-								</Paper>{" "}
+									<Description className={classes.icon} />
+									<span>Description</span>
+								</Paper>
+								<DescriptionModal
+									data={detail}
+									handleClose={handleCloseDescModal}
+									modal={descriptionModal}
+								/>
 							</Grid>
 							<Grid item xs={4} sm={2} lg={1}>
 								<Paper

@@ -1,10 +1,8 @@
-import Layout from "../components/layout";
-
-import { query } from "../lib/db";
-// import Sheet from "../components/sheet";
-// import { Notice } from "../lib/columns.js";
+import Layout from "@/components/layout";
+import { useEntries } from "@/lib/swr-hook";
+import LoadAnimation from "@/components/loading";
 import styled from "styled-components";
-import DataDisplay from "../components/display-news";
+import DataDisplay from "@/components/display-news";
 
 const Wrap = styled.div`
 	width: 90%;
@@ -12,25 +10,15 @@ const Wrap = styled.div`
 	margin-top: 60px;
 `;
 
-export default function Page({ data }) {
-	console.log(data);
-	return (
-		<Layout>
-			<Wrap>
-				<DataDisplay data={data} />
-				{/* <Sheet notice={Notice} data={data} /> */}
-			</Wrap>
-		</Layout>
-	);
-}
+export default function Page() {
+  const { entries, isLoading } = useEntries("/api/notice/all");
 
-export async function getServerSideProps(context) {
-	let res = await query(`SELECT * FROM news;`).catch((e) => {
-		console.log(e);
-	});
-	// console.log(res);
-	const data = JSON.stringify(res);
-	return {
-		props: { data }, // will be passed to the page component as props
-	};
+  console.log(entries);
+  return (
+    <Layout>
+      <Wrap>
+        {isLoading ? <LoadAnimation /> : <DataDisplay data={entries} />}
+      </Wrap>
+    </Layout>
+  );
 }

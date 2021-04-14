@@ -119,7 +119,7 @@ const AddForm = ({ handleClose, modal }) => {
 		<>
 			<Dialog open={modal} onClose={handleClose}>
 				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Add Innovations
+					Add News
 				</DialogTitle>
 				<DialogContent>
 					<TextField
@@ -204,7 +204,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 		<>
 			<Dialog open={modal} onClose={handleClose}>
 				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Edit Innovations
+					Edit News
 					<Delete color="secondary" />
 				</DialogTitle>
 				<DialogContent>
@@ -291,7 +291,7 @@ const DescriptionModal = ({ handleClose, modal, data }) => {
 
 const DataDisplay = (props) => {
 	const classes = useStyles();
-	const [details, setDetails] = useState(JSON.parse(props.data));
+	const [details, setDetails] = useState(props.data);
 
 	const [addModal, setAddModal] = useState(false);
 	const addModalOpen = () => {
@@ -305,7 +305,7 @@ const DataDisplay = (props) => {
 		<div>
 			<header>
 				<Typography variant="h4" style={{ margin: `15px 0` }}>
-					Recent Innovations
+					Recent News
 				</Typography>
 				<Button variant="contained" color="primary" onClick={addModalOpen}>
 					ADD +

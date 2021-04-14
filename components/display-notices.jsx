@@ -13,21 +13,20 @@ import { Checkbox, FormControlLabel, Typography } from "@material-ui/core";
 import {
 	Delete,
 	Edit,
-	LocationOn,
-	Link,
-	Description,
 	Flag,
+	Link,
+	Star,
+	StarBorder,
 	VisibilityOff,
 } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
-		boxSizing: `border-box`,
 	},
 	paper: {
-		margin: `${theme.spacing(1)}px auto`,
-		padding: `${theme.spacing(1.5)}px`,
+		margin: `${theme.spacing(1)} auto`,
+		padding: theme.spacing(2),
 		lineHeight: 1.5,
 	},
 	truncate: {
@@ -68,7 +67,7 @@ const AddAttachments = () => {
 	return (
 		<>
 			<Button variant="contained" color="primary" onClick={() => handleAdd()}>
-				+ Add Image
+				+ Add Attachments
 			</Button>
 			{fields.map((field, idx) => {
 				return (
@@ -79,11 +78,7 @@ const AddAttachments = () => {
 							onChange={(e) => handleChange(idx, e)}
 							style={{ margin: `8px` }}
 						/>
-						<TextField
-							type="file"
-							style={{ margin: `8px` }}
-							inputProps={{ accept: "image/*" }}
-						/>
+						<TextField type="file" style={{ margin: `8px` }} />
 						<Button
 							type="button"
 							onClick={() => handleRemove(idx)}
@@ -105,11 +100,11 @@ const dateformatter = (date) => {
 	var mm = format_date.getMonth() + 1;
 	var yyyy = format_date.getFullYear();
 	if (dd < 10) {
-		dd = "0" + dd;
+		dd = Number("0" + dd);
 	}
 
 	if (mm < 10) {
-		mm = "0" + mm;
+		mm = Number("0" + mm);
 	}
 	return yyyy + "-" + mm + "-" + dd;
 };
@@ -119,7 +114,7 @@ const AddForm = ({ handleClose, modal }) => {
 		<>
 			<Dialog open={modal} onClose={handleClose}>
 				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Add News
+					Add Notice
 				</DialogTitle>
 				<DialogContent>
 					<TextField
@@ -128,15 +123,7 @@ const AddForm = ({ handleClose, modal }) => {
 						label="Title"
 						type="text"
 						fullWidth
-						placeholder={"title"}
-					/>
-					<TextField
-						margin="dense"
-						id="desc"
-						label="Description"
-						type="text"
-						fullWidth
-						placeholder={"Description"}
+						defaultValue={"title"}
 					/>
 					<TextField
 						margin="dense"
@@ -158,22 +145,10 @@ const AddForm = ({ handleClose, modal }) => {
 							shrink: true,
 						}}
 					/>
-					{/* <TextField
-						margin="dense"
-						id="venue"
-						label="Venue"
-						type="text"
-						fullWidth
-						placeholder={"Venue of event"}
-					/> */}
-					{/* <TextField
-						margin="dense"
-						id="Doclink"
-						label="Registration form link (like: Google Doc, etc.) "
-						type="text"
-						fullWidth
-						placeholder={"Leave it blank if not available"}
-					/> */}
+					<FormControlLabel
+						control={<Checkbox name="important" />}
+						label="Important"
+					/>
 					<h2>Attachments</h2>
 					<AddAttachments />
 					{/* <a href={data.attachments} target="__blank">
@@ -204,7 +179,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 		<>
 			<Dialog open={modal} onClose={handleClose}>
 				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Edit News
+					Edit Notice
 					<Delete color="secondary" />
 				</DialogTitle>
 				<DialogContent>
@@ -238,15 +213,17 @@ const EditForm = ({ data, handleClose, modal }) => {
 							shrink: true,
 						}}
 					/>
-					<TextField
-						margin="dense"
-						id="description"
-						label="Description"
-						type="text"
-						fullWidth
-						defaultValue={data.description}
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={important}
+								onChange={handleChange}
+								name="important"
+							/>
+						}
+						label="Important"
 					/>
-					{/* <h2>Attachments</h2>
+					<h2>Attachments</h2>
 					<TextField
 						id="attachments"
 						margin="dense"
@@ -258,7 +235,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 					/>
 					<a href={data.attachments} target="__blank">
 						<Link />
-					</a> */}
+					</a>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleClose} color="primary">
@@ -270,28 +247,9 @@ const EditForm = ({ data, handleClose, modal }) => {
 	);
 };
 
-const DescriptionModal = ({ handleClose, modal, data }) => {
-	return (
-		<>
-			<Dialog
-				onClose={handleClose}
-				aria-labelledby="customized-dialog-title"
-				open={modal}
-			>
-				<DialogTitle id="customized-dialog-title" onClose={handleClose}>
-					Description
-				</DialogTitle>
-				<DialogContent dividers>
-					<Typography gutterBottom>{data.description}</Typography>
-				</DialogContent>
-			</Dialog>
-		</>
-	);
-};
-
 const DataDisplay = (props) => {
 	const classes = useStyles();
-	const [details, setDetails] = useState(JSON.parse(props.data));
+	const [details, setDetails] = useState(props.data);
 
 	const [addModal, setAddModal] = useState(false);
 	const addModalOpen = () => {
@@ -305,7 +263,7 @@ const DataDisplay = (props) => {
 		<div>
 			<header>
 				<Typography variant="h4" style={{ margin: `15px 0` }}>
-					Recent News
+					Recent Notices
 				</Typography>
 				<Button variant="contained" color="primary" onClick={addModalOpen}>
 					ADD +
@@ -314,7 +272,7 @@ const DataDisplay = (props) => {
 
 			<AddForm handleClose={handleCloseAddModal} modal={addModal} />
 
-			<Grid container spacing={2} className={classes.root}>
+			<Grid container spacing={3} className={classes.root}>
 				{details.map((detail) => {
 					let openDate = new Date(detail.timestamp);
 					let dd = openDate.getDate();
@@ -323,7 +281,6 @@ const DataDisplay = (props) => {
 					openDate = dd + "/" + mm + "/" + yyyy;
 
 					const [editModal, setEditModal] = useState(false);
-					const [descriptionModal, setDescriptionModal] = useState(false);
 
 					const editModalOpen = () => {
 						setEditModal(true);
@@ -333,27 +290,13 @@ const DataDisplay = (props) => {
 						setEditModal(false);
 					};
 
-					const descModalOpen = () => {
-						setDescriptionModal(true);
-					};
-
-					const handleCloseDescModal = () => {
-						setDescriptionModal(false);
-					};
-
 					return (
 						<React.Fragment key={detail.id}>
 							<Grid item xs={12} sm={6} lg={9}>
 								<Paper className={classes.paper}>
 									<span className={classes.truncate}>{detail.title}</span>
-									{detail.image && (
-										<React.Fragment>
-											<Flag />
-											<a href={detail.image}>Image</a>
-										</React.Fragment>
-									)}
-									<LocationOn color="secondary" />
-									NIT PATNA
+									<Flag />
+									<a href={detail.attachments}> Download</a>
 									<span style={{ float: "right" }}>{openDate}</span>
 								</Paper>
 							</Grid>
@@ -386,17 +329,22 @@ const DataDisplay = (props) => {
 							<Grid item xs={4} sm={2} lg={1}>
 								<Paper
 									className={classes.paper}
-									style={{ textAlign: `center`, cursor: `pointer` }}
-									onClick={descModalOpen}
+									style={{ textAlign: `center` }}
 								>
-									<Description className={classes.icon} />
-									<span>Description</span>
-								</Paper>
-								<DescriptionModal
-									data={detail}
-									handleClose={handleCloseDescModal}
-									modal={descriptionModal}
-								/>
+									{detail.important ? (
+										<>
+											<Star className={classes.icon} />
+											{/* <i className="fa fa-star" style={{ color: "secondary" }}></i> */}
+											<span>Important</span>
+										</>
+									) : (
+										<>
+											{/* <i className="fa fa-star" style={{ color: "action" }}></i> */}
+											<StarBorder className={classes.icon} />
+											<span>Normal</span>
+										</>
+									)}
+								</Paper>{" "}
 							</Grid>
 							<Grid item xs={4} sm={2} lg={1}>
 								<Paper

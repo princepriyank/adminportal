@@ -1,5 +1,14 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ]
+    },
     "target": "es5",
     "lib": [
       "dom",
@@ -22,7 +31,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "components/sheet.js", "lib/columns.js", "pages/api/faculty/[type].js", "pages/api/innovation/[type].js"  ],
+, "pages/api/update/[type].js", "components/display-notices.jsx"  ],
   "exclude": [
     "node_modules"
   ]

@@ -1,4 +1,4 @@
-import Layout from "../components/layout";
+import Layout from "@/components/layout";
 import styled from "styled-components";
 import Image from "next/image";
 import Card from "@material-ui/core/Card";
@@ -8,11 +8,11 @@ import Button from "@material-ui/core/Button";
 import { signIn, signout, useSession } from "next-auth/client";
 import CardActions from "@material-ui/core/CardActions";
 import { useRouter } from "next/router";
-import Modal from "../components/modal";
-import Notice from "../components/entry forms/notice-entry";
-import News from "../components/entry forms/news-entry";
-import { query } from "../lib/db";
-import Profilepage from "../components/profile";
+import Modal from "@/components/modal";
+import Notice from "@/components/entry forms/notice-entry";
+import News from "@/components/entry forms/news-entry";
+import { query } from "@/lib/db";
+import Profilepage from "@/components/profile";
 import { getSession } from "next-auth/client";
 
 const Home = styled.div`

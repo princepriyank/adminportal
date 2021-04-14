@@ -13,20 +13,20 @@ import { Checkbox, FormControlLabel, Typography } from "@material-ui/core";
 import {
 	Delete,
 	Edit,
-	Flag,
+	LocationOn,
 	Link,
-	Star,
-	StarBorder,
+	Flag,
 	VisibilityOff,
 } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
+		boxSizing: `border-box`,
 	},
 	paper: {
-		margin: `${theme.spacing(1)} auto`,
-		padding: theme.spacing(2),
+		margin: `${theme.spacing(1)}px auto`,
+		padding: `${theme.spacing(1.5)}px`,
 		lineHeight: 1.5,
 	},
 	truncate: {
@@ -114,7 +114,7 @@ const AddForm = ({ handleClose, modal }) => {
 		<>
 			<Dialog open={modal} onClose={handleClose}>
 				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Add Notice
+					Add Event
 				</DialogTitle>
 				<DialogContent>
 					<TextField
@@ -123,7 +123,7 @@ const AddForm = ({ handleClose, modal }) => {
 						label="Title"
 						type="text"
 						fullWidth
-						defaultValue={"title"}
+						placeholder={"title"}
 					/>
 					<TextField
 						margin="dense"
@@ -145,9 +145,21 @@ const AddForm = ({ handleClose, modal }) => {
 							shrink: true,
 						}}
 					/>
-					<FormControlLabel
-						control={<Checkbox name="important" />}
-						label="Important"
+					<TextField
+						margin="dense"
+						id="venue"
+						label="Venue"
+						type="text"
+						fullWidth
+						placeholder={"Venue of Event"}
+					/>
+					<TextField
+						margin="dense"
+						id="Doclink"
+						label="Registration form link (like: Google Doc, etc.) "
+						type="text"
+						fullWidth
+						placeholder={"Leave it blank if not available"}
 					/>
 					<h2>Attachments</h2>
 					<AddAttachments />
@@ -179,7 +191,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 		<>
 			<Dialog open={modal} onClose={handleClose}>
 				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Edit Notice
+					Edit Event
 					<Delete color="secondary" />
 				</DialogTitle>
 				<DialogContent>
@@ -213,15 +225,21 @@ const EditForm = ({ data, handleClose, modal }) => {
 							shrink: true,
 						}}
 					/>
-					<FormControlLabel
-						control={
-							<Checkbox
-								checked={important}
-								onChange={handleChange}
-								name="important"
-							/>
-						}
-						label="Important"
+					<TextField
+						margin="dense"
+						id="venue"
+						label="Venue"
+						type="text"
+						fullWidth
+						defaultValue={data.venue}
+					/>
+					<TextField
+						margin="dense"
+						id="Doclink"
+						label="Registration form link (like: Google Doc, etc.) "
+						type="text"
+						fullWidth
+						defaultValue={data.doclink}
 					/>
 					<h2>Attachments</h2>
 					<TextField
@@ -249,7 +267,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 
 const DataDisplay = (props) => {
 	const classes = useStyles();
-	const [details, setDetails] = useState(JSON.parse(props.data));
+	const [details, setDetails] = useState(props.data);
 
 	const [addModal, setAddModal] = useState(false);
 	const addModalOpen = () => {
@@ -263,7 +281,7 @@ const DataDisplay = (props) => {
 		<div>
 			<header>
 				<Typography variant="h4" style={{ margin: `15px 0` }}>
-					Recent Notices
+					Recent Events
 				</Typography>
 				<Button variant="contained" color="primary" onClick={addModalOpen}>
 					ADD +
@@ -272,7 +290,7 @@ const DataDisplay = (props) => {
 
 			<AddForm handleClose={handleCloseAddModal} modal={addModal} />
 
-			<Grid container spacing={3} className={classes.root}>
+			<Grid container spacing={2} className={classes.root}>
 				{details.map((detail) => {
 					let openDate = new Date(detail.timestamp);
 					let dd = openDate.getDate();
@@ -295,8 +313,14 @@ const DataDisplay = (props) => {
 							<Grid item xs={12} sm={6} lg={9}>
 								<Paper className={classes.paper}>
 									<span className={classes.truncate}>{detail.title}</span>
-									<Flag />
-									<a href={detail.attachments}> Download</a>
+									{detail.attachments && (
+										<React.Fragment>
+											<Flag />
+											<a href={detail.attachments}>Download</a>
+										</React.Fragment>
+									)}
+									<LocationOn color="secondary" />
+									{detail.venue}
 									<span style={{ float: "right" }}>{openDate}</span>
 								</Paper>
 							</Grid>
@@ -331,19 +355,10 @@ const DataDisplay = (props) => {
 									className={classes.paper}
 									style={{ textAlign: `center` }}
 								>
-									{detail.important ? (
-										<>
-											<Star className={classes.icon} />
-											{/* <i className="fa fa-star" style={{ color: "secondary" }}></i> */}
-											<span>Important</span>
-										</>
-									) : (
-										<>
-											{/* <i className="fa fa-star" style={{ color: "action" }}></i> */}
-											<StarBorder className={classes.icon} />
-											<span>Normal</span>
-										</>
-									)}
+									<a href={detail.doclink} style={{ textDecoration: `none` }}>
+										<Link className={classes.icon} />
+										<span>Reg Link</span>
+									</a>
 								</Paper>{" "}
 							</Grid>
 							<Grid item xs={4} sm={2} lg={1}>
