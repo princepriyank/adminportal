@@ -10,6 +10,7 @@ import CardActions from "@material-ui/core/CardActions";
 import Profilepage from "@/components/profile";
 import { getSession } from "next-auth/client";
 import { query } from "@/lib/db";
+import { useEffect } from "react";
 
 const Home = styled.div`
   width: 100vw;
@@ -34,7 +35,9 @@ const Home = styled.div`
 
 export default function Page({result}) {
   const [session, loading] = useSession();
-  
+  useEffect(() => {
+    if(session){fetch("/api/gdrive/authorize")}    
+  }, [session])
   return (
     <>
       {!session ? (

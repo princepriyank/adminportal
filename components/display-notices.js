@@ -160,7 +160,7 @@ const AddForm = ({ handleClose, modal }) => {
 		// console.log(content);
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		let open = new Date(content.openDate);
 		let close = new Date(content.closeDate);
@@ -177,13 +177,25 @@ const AddForm = ({ handleClose, modal }) => {
 			closeDate: close,
 			timestamp: now,
 			email: session.user.email,
-			attachments: attachments,
+			attachments: [...attachments],
 		};
 		for (let i = 0; i < data.attachments.length; i++) {
-			if (data.attachments[i].url == undefined) {
+			// delete data.attachments[i].value;
+			if (data.attachments[i].url === undefined) {
 				data.attachments[i].url = "";
 			}
-			delete data.attachments[i].value;
+
+			let file = new FormData();
+			file.append("files", data.attachments[i].url);
+			// console.log(file.get("files"));
+			let viewLink = await fetch("/api/gdrive/uploadfiles", {
+				method: "POST",
+				body: file,
+			});
+			viewLink = await viewLink.json();
+			console.log("Client side link");
+			console.log(viewLink);
+			// data.attachments[i].url = viewLink.webViewLink;
 		}
 		console.log(data);
 	};
