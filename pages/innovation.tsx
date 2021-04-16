@@ -11,7 +11,7 @@ const Wrap = styled.div`
 `;
 
 export default function Page() {
-	const { entries, isLoading } = useEntries('/api/notice/all');
+	const { entries, isLoading } = useEntries('/api/innovation/all');
 
 	console.log(entries);
 	return (
