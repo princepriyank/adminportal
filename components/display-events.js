@@ -313,12 +313,15 @@ const DataDisplay = (props) => {
 							<Grid item xs={12} sm={6} lg={9}>
 								<Paper className={classes.paper}>
 									<span className={classes.truncate}>{detail.title}</span>
-									{detail.attachments && (
-										<React.Fragment>
-											<Flag />
-											<a href={detail.attachments}>Download</a>
-										</React.Fragment>
-									)}
+									{detail.attachments &&
+										detail.attachments.map((attachment) => {
+											return (
+												<>
+													<Flag />
+													<a href={attachment.url}>{attachment.caption}</a>
+												</>
+											);
+										})}{" "}
 									<LocationOn color="secondary" />
 									{detail.venue}
 									<span style={{ float: "right" }}>{openDate}</span>

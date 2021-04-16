@@ -343,7 +343,7 @@ const DataDisplay = (props) => {
 
 					return (
 						<React.Fragment key={detail.id}>
-							<Grid item xs={12} sm={6} lg={9}>
+							<Grid item xs={12} sm={8} lg={10}>
 								<Paper className={classes.paper}>
 									<span className={classes.truncate}>{detail.title}</span>
 									{detail.image && (
@@ -357,33 +357,8 @@ const DataDisplay = (props) => {
 									<span style={{ float: "right" }}>{openDate}</span>
 								</Paper>
 							</Grid>
-							<Grid item xs={4} sm={2} lg={1}>
-								<Paper
-									className={classes.paper}
-									style={{ textAlign: `center` }}
-								>
-									{detail.isVisible ? (
-										<>
-											<Visibility className={classes.icon} />
-											{/* <i className="fa fa-eye" style={{ color: "action" }}></i> */}
-											<span>Visible</span>
-										</>
-									) : (
-										<>
-											{/* <i
-												className="fa fa-eye-slash"
-												style={{ color: "secondary" }}
-											></i> */}
-											<VisibilityOff
-												color="secondary"
-												className={classes.icon}
-											/>
-											<span>Archive</span>
-										</>
-									)}
-								</Paper>
-							</Grid>
-							<Grid item xs={4} sm={2} lg={1}>
+
+							<Grid item xs={6} sm={2} lg={1}>
 								<Paper
 									className={classes.paper}
 									style={{ textAlign: `center`, cursor: `pointer` }}
@@ -398,7 +373,7 @@ const DataDisplay = (props) => {
 									modal={descriptionModal}
 								/>
 							</Grid>
-							<Grid item xs={4} sm={2} lg={1}>
+							<Grid item xs={6} sm={2} lg={1}>
 								<Paper
 									className={classes.paper}
 									style={{ textAlign: `center`, cursor: `pointer` }}
@@ -424,3 +399,31 @@ const DataDisplay = (props) => {
 };
 
 export default DataDisplay;
+
+// Extras
+// 	<Grid item xs={4} sm={2} lg={1}>
+// 								<Paper
+// 									className={classes.paper}
+// 									style={{ textAlign: `center` }}
+// 								>
+// 									{detail.isVisible ? (
+// 										<>
+// 											<Visibility className={classes.icon} />
+// 											{/* <i className="fa fa-eye" style={{ color: "action" }}></i> */}
+// 											<span>Visible</span>
+// 										</>
+// 									) : (
+// 										<>
+// 											{/* <i
+// 												className="fa fa-eye-slash"
+// 												style={{ color: "secondary" }}
+// 											></i> */}
+// 											<VisibilityOff
+// 												color="secondary"
+// 												className={classes.icon}
+// 											/>
+// 											<span>Archive</span>
+// 										</>
+// 									)}
+// 								</Paper>
+// 							</Grid >

@@ -7,7 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
+import { useSession } from "next-auth/client";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Checkbox, FormControlLabel, Typography } from "@material-ui/core";
 import {
@@ -15,6 +15,7 @@ import {
 	Edit,
 	Flag,
 	Link,
+	Visibility,
 	Star,
 	StarBorder,
 	VisibilityOff,
@@ -43,25 +44,32 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const AddAttachments = () => {
-	const [fields, setFields] = useState([{ value: null }]);
+const AddAttachments = ({ attachments, setAttachments }) => {
+	// const [attachments, setAttachments] = useState([{ value: "", file: "" }]);
 
 	function handleChange(i, event) {
-		const values = [...fields];
+		const values = [...attachments];
+		values[i].caption = event.target.value;
+		setAttachments(values);
+	}
+	function handleChangeFile(i, event) {
+		const values = [...attachments];
+		values[i].url = event.target.files[0];
 		values[i].value = event.target.value;
-		setFields(values);
+		// console.log(event);
+		setAttachments(values);
 	}
 
 	function handleAdd() {
-		const values = [...fields];
-		values.push({ value: null });
-		setFields(values);
+		const values = [...attachments];
+		values.push({ caption: "", url: "", value: "" });
+		setAttachments(values);
 	}
 
 	function handleRemove(i) {
-		const values = [...fields];
+		const values = [...attachments];
 		values.splice(i, 1);
-		setFields(values);
+		setAttachments(values);
 	}
 
 	return (
@@ -69,19 +77,33 @@ const AddAttachments = () => {
 			<Button variant="contained" color="primary" onClick={() => handleAdd()}>
 				+ Add Attachments
 			</Button>
-			{fields.map((field, idx) => {
+			{attachments.map((attachment, idx) => {
 				return (
-					<React.Fragment>
+					<React.Fragment key={`${attachment}-${idx}`}>
 						<TextField
 							placeholder="SubTitle"
 							fullWidth
+							name="caption"
+							value={attachment.caption}
 							onChange={(e) => handleChange(idx, e)}
 							style={{ margin: `8px` }}
 						/>
-						<TextField type="file" style={{ margin: `8px` }} />
+
+						<TextField
+							type="file"
+							name="url"
+							value={attachment.value}
+							style={{ margin: `8px` }}
+							onChange={(e) => {
+								handleChangeFile(idx, e);
+							}}
+						/>
+
 						<Button
 							type="button"
-							onClick={() => handleRemove(idx)}
+							onClick={() => {
+								handleRemove(idx);
+							}}
 							style={{ display: `inline-block`, fontSize: `1.5rem` }}
 						>
 							<Delete color="secondary" />{" "}
@@ -89,6 +111,9 @@ const AddAttachments = () => {
 					</React.Fragment>
 				);
 			})}
+			{/* <button type="button" onClick={() => console.log(attachments)}>
+				Status
+			</button> */}
 		</>
 	);
 };
@@ -100,66 +125,172 @@ const dateformatter = (date) => {
 	var mm = format_date.getMonth() + 1;
 	var yyyy = format_date.getFullYear();
 	if (dd < 10) {
-		dd = Number("0" + dd);
+		dd = "0" + dd;
 	}
 
 	if (mm < 10) {
-		mm = Number("0" + mm);
+		mm = "0" + mm;
 	}
 	return yyyy + "-" + mm + "-" + dd;
 };
 
 const AddForm = ({ handleClose, modal }) => {
+	const [session, loading] = useSession();
+	const [content, setContent] = useState({
+		title: "",
+		openDate: "",
+		closeDate: "",
+		email: "",
+		timestamp: "",
+		isVisible: false,
+		important: false,
+		attachments: [],
+	});
+
+	const [attachments, setAttachments] = useState([
+		{ caption: "", url: "", value: "" },
+	]);
+
+	const handleChange = (e) => {
+		if (e.target.name == "important" || e.target.name == "isVisible") {
+			setContent({ ...content, [e.target.name]: e.target.checked });
+		} else {
+			setContent({ ...content, [e.target.name]: e.target.value });
+		}
+		// console.log(content);
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		let open = new Date(content.openDate);
+		let close = new Date(content.closeDate);
+		open = open.getTime();
+		close = close.getTime();
+		let now = Date.now();
+
+		let data = {
+			...content,
+			id: now,
+			isVisible: content.isVisible ? 1 : 0,
+			important: content.important ? 1 : 0,
+			openDate: open,
+			closeDate: close,
+			timestamp: now,
+			email: session.user.email,
+			attachments: attachments,
+		};
+		for (let i = 0; i < data.attachments.length; i++) {
+			if (data.attachments[i].url == undefined) {
+				data.attachments[i].url = "";
+			}
+			delete data.attachments[i].value;
+		}
+		console.log(data);
+	};
+
+	// const handleStringChange = (e) => {
+	// 	setContent({ ...content, [e.target.name]: e.target.value });
+	// 	console.log(e);
+	// 	// console.log(content);
+	// };
+
+	// const handleDateChange = (e) => {
+	// 	let date = new Date(e.target.value);
+	// 	date = date.getTime();
+	// 	setContent({ ...content, [e.target.name]: date });
+	// };
+
+	// const handleBooleanChange = (e) => {
+	// 	setContent({ ...content, [e.target.name]: e.target.checked });
+	// };
+
 	return (
 		<>
 			<Dialog open={modal} onClose={handleClose}>
-				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Add Notice
-				</DialogTitle>
-				<DialogContent>
-					<TextField
-						margin="dense"
-						id="label"
-						label="Title"
-						type="text"
-						fullWidth
-						defaultValue={"title"}
-					/>
-					<TextField
-						margin="dense"
-						id="openDate"
-						label="Open Date"
-						type="date"
-						fullWidth
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<TextField
-						id="closeDate"
-						label="Close Date"
-						margin="dense"
-						type="date"
-						fullWidth
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<FormControlLabel
-						control={<Checkbox name="important" />}
-						label="Important"
-					/>
-					<h2>Attachments</h2>
-					<AddAttachments />
-					{/* <a href={data.attachments} target="__blank">
+				<form
+					onSubmit={(e) => {
+						handleSubmit(e);
+					}}
+				>
+					<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
+						Add Notice
+					</DialogTitle>
+					<DialogContent>
+						<TextField
+							margin="dense"
+							id="label"
+							label="Title"
+							name="title"
+							type="text"
+							required
+							fullWidth
+							placeholder="Title"
+							onChange={(e) => handleChange(e)}
+							value={content.title}
+						/>
+						<TextField
+							margin="dense"
+							id="openDate"
+							label="Open Date"
+							name="openDate"
+							type="date"
+							required
+							value={content.openDate}
+							onChange={(e) => handleChange(e)}
+							fullWidth
+							InputLabelProps={{
+								shrink: true,
+							}}
+						/>
+						<TextField
+							id="closeDate"
+							label="Close Date"
+							name="closeDate"
+							margin="dense"
+							required
+							type="date"
+							onChange={(e) => handleChange(e)}
+							value={content.closeDate}
+							fullWidth
+							InputLabelProps={{
+								shrink: true,
+							}}
+						/>
+						<FormControlLabel
+							control={
+								<Checkbox
+									name="important"
+									checked={content.important}
+									onChange={(e) => handleChange(e)}
+								/>
+							}
+							label="Important"
+						/>
+						<FormControlLabel
+							control={
+								<Checkbox
+									name="isVisible"
+									checked={content.isVisible}
+									onChange={(e) => handleChange(e)}
+								/>
+							}
+							label="Visibility"
+						/>
+						<h2>Attachments</h2>
+						<AddAttachments
+							attachments={attachments}
+							setAttachments={setAttachments}
+						/>
+						{/* <a href={data.attachments} target="__blank">
 							<FontAwesomeIcon icon={faExternalLinkAlt} />
 						</a> */}
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Submit
-					</Button>
-				</DialogActions>
+					</DialogContent>
+					<DialogActions>
+						<Button type="submit" color="primary">
+							Submit
+						</Button>
+					</DialogActions>
+				</form>
 			</Dialog>
 		</>
 	);
@@ -167,12 +298,17 @@ const AddForm = ({ handleClose, modal }) => {
 
 const EditForm = ({ data, handleClose, modal }) => {
 	let openDate = dateformatter(data.openDate);
-	// console.log(data.openDate);
+	// console.log(openDate);
 	const [important, setImportant] = useState(data.important);
+	const [isVisible, setIsVisible] = useState(data.isVisible);
 
 	let closeDate = dateformatter(data.closeDate);
-	const handleChange = () => {
-		setImportant(!important);
+	const handleBooleanChange = (name) => {
+		if (name == "important") {
+			setImportant(!important);
+		} else if (name == "visibility") {
+			setIsVisible(!isVisible);
+		}
 	};
 
 	return (
@@ -198,6 +334,20 @@ const EditForm = ({ data, handleClose, modal }) => {
 						type="date"
 						fullWidth
 						defaultValue={openDate}
+						// onChange={(e) => {
+						// 	console.log(e.target.value);
+						// 	let da = new Date(e.target.value);
+						// 	console.log(
+						// 		" " +
+						// 			da.getTime() +
+						// 			" " +
+						// 			da.getMonth() +
+						// 			" " +
+						// 			da.getDate() +
+						// 			" " +
+						// 			da.getFullYear()
+						// 	);
+						// }}
 						InputLabelProps={{
 							shrink: true,
 						}}
@@ -217,25 +367,49 @@ const EditForm = ({ data, handleClose, modal }) => {
 						control={
 							<Checkbox
 								checked={important}
-								onChange={handleChange}
+								onChange={(e) => {
+									handleBooleanChange(e.target.name);
+								}}
 								name="important"
 							/>
 						}
 						label="Important"
 					/>
-					<h2>Attachments</h2>
-					<TextField
-						id="attachments"
-						margin="dense"
-						type="text"
-						defaultValue={"Download"}
-						InputLabelProps={{
-							shrink: true,
-						}}
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={isVisible}
+								onChange={(e) => {
+									handleBooleanChange(e.target.name);
+								}}
+								name="visibility"
+							/>
+						}
+						label="Visibility"
 					/>
-					<a href={data.attachments} target="__blank">
-						<Link />
-					</a>
+					{data.attachments && (
+						<>
+							<h2>Attachments</h2>
+							{data.attachments.map((attachment) => {
+								return (
+									<>
+										<TextField
+											id="attachments"
+											margin="dense"
+											type="text"
+											value={attachment.caption}
+											InputLabelProps={{
+												shrink: true,
+											}}
+										/>
+										<a href={attachment.url} target="__blank">
+											<Link />
+										</a>
+									</>
+								);
+							})}
+						</>
+					)}
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleClose} color="primary">
@@ -295,8 +469,16 @@ const DataDisplay = (props) => {
 							<Grid item xs={12} sm={6} lg={9}>
 								<Paper className={classes.paper}>
 									<span className={classes.truncate}>{detail.title}</span>
-									<Flag />
-									<a href={detail.attachments}> Download</a>
+									{detail.attachments &&
+										detail.attachments.map((attachment) => {
+											return (
+												<>
+													<Flag />
+													<a href={attachment.url}>{attachment.caption}</a>
+												</>
+											);
+										})}
+
 									<span style={{ float: "right" }}>{openDate}</span>
 								</Paper>
 							</Grid>

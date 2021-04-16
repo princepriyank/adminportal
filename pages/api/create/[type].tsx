@@ -17,6 +17,7 @@ const handler = async (req, res) => {
             timestamp=${params.timestamp},
             openDate=${params.openDate},
             closeDate=${params.closeDate},
+            isVisible=${params.isVisible},
             important=${params.important},
             attachments=${params.attachments},
             email=${params.email},
@@ -31,15 +32,14 @@ const handler = async (req, res) => {
             openDate=${params.openDate},
             closeDate=${params.closeDate},
               venue=${params.venue},
-              doclink=${params.doclink}
-            important=${params.important},
+              doclink=${params.doclink},
             attachments=${params.attachments},
             email=${params.email},
             primary key (id))`
         );
       } else if (type == "innovation") {
         await query(
-          `insert into notices where (
+          `insert into innovation where (
             	id=${params.id},
             	title=${params.title},
             	timestamp=${params.timestamp},
@@ -48,7 +48,6 @@ const handler = async (req, res) => {
                 description=${params.description},
                 image=${params.image},
                 author=${params.author},
-            	important=${params.important},
             	email=${params.email},
                 primary key(id))`
         );
@@ -63,7 +62,6 @@ const handler = async (req, res) => {
       description=${params.description},
       image=${params.image},
       author=${params.author},
-		important=${params.important},
 		email=${params.email},
       primary key(id))`
         );
