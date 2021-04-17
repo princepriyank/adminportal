@@ -316,6 +316,46 @@ const AddForm = ({ handleClose, modal }) => {
 	);
 };
 
+const ConfirmDelete = ({ handleClose, modal, id }) => {
+	const deleteEvent = async () => {
+		let result = await fetch("/api/delete/innovation", {
+			method: "DELETE",
+			body: id.toString(),
+		});
+		result = await result.json();
+		if (result instanceof Error) {
+			console.log("Error Occured");
+			console.log(result);
+		}
+		console.log(result);
+
+		window.location.reload();
+	};
+
+	return (
+		<div>
+			<Dialog open={modal} onClose={handleClose}>
+				<DialogTitle id="alert-dialog-title">
+					{"Do you want to Delete This Innovation ?"}
+				</DialogTitle>
+
+				<DialogActions>
+					<Button
+						variant="contained"
+						onClick={() => deleteEvent()}
+						color="secondary"
+					>
+						Delete
+					</Button>
+					<Button onClick={handleClose} color="primary" autoFocus>
+						Cancel
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	);
+};
+
 const EditForm = ({ data, handleClose, modal }) => {
 	const [session, loading] = useSession();
 	const [content, setContent] = useState({
@@ -326,6 +366,11 @@ const EditForm = ({ data, handleClose, modal }) => {
 		description: data.description,
 	});
 	const [submitting, setSubmitting] = useState(false);
+
+	const [verifyDelete, setVerifyDelete] = useState(false);
+	const handleDelete = () => {
+		setVerifyDelete(false);
+	};
 
 	const [image, setImage] = useState(data.image);
 	const handleChange = (e) => {
@@ -358,7 +403,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 		};
 
 		console.log(finaldata);
-		let result = await fetch("/api/update/innovation", {
+		let result = await fetch("/api/update/news", {
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
@@ -379,10 +424,27 @@ const EditForm = ({ data, handleClose, modal }) => {
 		<>
 			<Dialog open={modal} onClose={handleClose}>
 				<form onSubmit={(e) => handleSubmit(e)}>
-					<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
+					<DialogTitle
+						disableTypography
+						style={{ fontSize: `2rem`, position: "relative" }}
+					>
 						Edit Innovations
-						<Delete color="secondary" />
+						<i
+							style={{ position: `absolute`, right: `15px`, cursor: `pointer` }}
+						>
+							<Delete
+								type="button"
+								onClick={() => setVerifyDelete(true)}
+								style={{ height: `2rem`, width: `auto` }}
+								color="secondary"
+							/>
+						</i>
 					</DialogTitle>
+					<ConfirmDelete
+						modal={verifyDelete}
+						handleClose={handleDelete}
+						id={content.id}
+					/>
 					<DialogContent>
 						<TextField
 							margin="dense"
@@ -557,10 +619,7 @@ const DataDisplay = (props) => {
 												return (
 													<span
 														key={idx}
-														style={{
-															display: `inline-flex`,
-															margin: `5px 0 `,
-														}}
+														style={{ display: `inline-flex`, margin: `5px 0 ` }}
 													>
 														<Flag />
 														<a href={img.url} target="_blank">

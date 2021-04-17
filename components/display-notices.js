@@ -329,6 +329,46 @@ const AddForm = ({ handleClose, modal }) => {
 	);
 };
 
+const ConfirmDelete = ({ handleClose, modal, id }) => {
+	const deleteEvent = async () => {
+		let result = await fetch("/api/delete/notice", {
+			method: "DELETE",
+			body: id.toString(),
+		});
+		result = await result.json();
+		if (result instanceof Error) {
+			console.log("Error Occured");
+			console.log(result);
+		}
+		console.log(result);
+
+		window.location.reload();
+	};
+
+	return (
+		<div>
+			<Dialog open={modal} onClose={handleClose}>
+				<DialogTitle id="alert-dialog-title">
+					{"Do you want to Delete This Notice ?"}
+				</DialogTitle>
+
+				<DialogActions>
+					<Button
+						variant="contained"
+						onClick={() => deleteEvent()}
+						color="secondary"
+					>
+						Delete
+					</Button>
+					<Button onClick={handleClose} color="primary" autoFocus>
+						Cancel
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	);
+};
+
 const EditForm = ({ data, handleClose, modal }) => {
 	const [session, loading] = useSession();
 	const [content, setContent] = useState({
@@ -339,6 +379,11 @@ const EditForm = ({ data, handleClose, modal }) => {
 		isVisible: data.isVisible ? true : false,
 		important: data.important ? true : false,
 	});
+
+	const [verifyDelete, setVerifyDelete] = useState(false);
+	const handleDelete = () => {
+		setVerifyDelete(false);
+	};
 
 	const [attachments, setAttachments] = useState(data.attachments);
 	const [submitting, setSubmitting] = useState(false);
@@ -405,10 +450,27 @@ const EditForm = ({ data, handleClose, modal }) => {
 						handleSubmit(e);
 					}}
 				>
-					<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
+					<DialogTitle
+						disableTypography
+						style={{ fontSize: `2rem`, position: "relative" }}
+					>
 						Edit Notice
-						<Delete color="secondary" />
+						<i
+							style={{ position: `absolute`, right: `15px`, cursor: `pointer` }}
+						>
+							<Delete
+								type="button"
+								onClick={() => setVerifyDelete(true)}
+								style={{ height: `2rem`, width: `auto` }}
+								color="secondary"
+							/>
+						</i>
 					</DialogTitle>
+					<ConfirmDelete
+						modal={verifyDelete}
+						handleClose={handleDelete}
+						id={content.id}
+					/>
 					<DialogContent>
 						<TextField
 							margin="dense"
