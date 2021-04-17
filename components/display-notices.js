@@ -74,7 +74,12 @@ const AddAttachments = ({ attachments, setAttachments }) => {
 
 	return (
 		<>
-			<Button variant="contained" color="primary" onClick={() => handleAdd()}>
+			<Button
+				variant="contained"
+				color="primary"
+				type="button"
+				onClick={() => handleAdd()}
+			>
 				+ Add Attachments
 			</Button>
 			{attachments.map((attachment, idx) => {
@@ -140,16 +145,14 @@ const AddForm = ({ handleClose, modal }) => {
 		title: "",
 		openDate: "",
 		closeDate: "",
-		email: "",
-		timestamp: "",
 		isVisible: false,
 		important: false,
-		attachments: [],
 	});
 
 	const [attachments, setAttachments] = useState([
 		{ caption: "", url: "", value: "" },
 	]);
+	const [submitting, setSubmitting] = useState(false);
 
 	const handleChange = (e) => {
 		if (e.target.name == "important" || e.target.name == "isVisible") {
@@ -162,6 +165,7 @@ const AddForm = ({ handleClose, modal }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setSubmitting(true);
 		let open = new Date(content.openDate);
 		let close = new Date(content.closeDate);
 		open = open.getTime();
@@ -180,41 +184,46 @@ const AddForm = ({ handleClose, modal }) => {
 			attachments: [...attachments],
 		};
 		for (let i = 0; i < data.attachments.length; i++) {
-			// delete data.attachments[i].value;
-			if (data.attachments[i].url === undefined) {
-				data.attachments[i].url = "";
+			delete data.attachments[i].value;
+			// if (data.attachments[i].url === undefined) {
+			// 	data.attachments[i].url = "";
+			// }
+			console.log(data.attachments[i]);
+
+			if (data.attachments[i].url) {
+				let file = new FormData();
+				file.append("files", data.attachments[i].url);
+				// console.log(file.get("files"));
+				let viewLink = await fetch("/api/gdrive/uploadfiles", {
+					method: "POST",
+					body: file,
+				});
+				viewLink = await viewLink.json();
+				// console.log("Client side link");
+				// console.log(viewLink);
+				data.attachments[i].url = viewLink[0].webViewLink;
+			} else {
+				console.log("Request Not Sent");
 			}
-
-			let file = new FormData();
-			file.append("files", data.attachments[i].url);
-			// console.log(file.get("files"));
-			let viewLink = await fetch("/api/gdrive/uploadfiles", {
-				method: "POST",
-				body: file,
-			});
-			viewLink = await viewLink.json();
-			console.log("Client side link");
-			console.log(viewLink);
-			// data.attachments[i].url = viewLink.webViewLink;
 		}
-		console.log(data);
+		// data.attachments = JSON.stringify(data.attachments);
+
+		let result = await fetch("/api/create/notice", {
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			method: "POST",
+			body: JSON.stringify(data),
+		});
+		result = await result.json();
+		if (result instanceof Error) {
+			console.log("Error Occured");
+			console.log(result);
+		}
+		console.log(result);
+		window.location.reload();
 	};
-
-	// const handleStringChange = (e) => {
-	// 	setContent({ ...content, [e.target.name]: e.target.value });
-	// 	console.log(e);
-	// 	// console.log(content);
-	// };
-
-	// const handleDateChange = (e) => {
-	// 	let date = new Date(e.target.value);
-	// 	date = date.getTime();
-	// 	setContent({ ...content, [e.target.name]: date });
-	// };
-
-	// const handleBooleanChange = (e) => {
-	// 	setContent({ ...content, [e.target.name]: e.target.checked });
-	// };
 
 	return (
 		<>
@@ -298,9 +307,15 @@ const AddForm = ({ handleClose, modal }) => {
 						</a> */}
 					</DialogContent>
 					<DialogActions>
-						<Button type="submit" color="primary">
-							Submit
-						</Button>
+						{submitting ? (
+							<Button type="submit" color="primary" disabled>
+								Submitting
+							</Button>
+						) : (
+							<Button type="submit" color="primary">
+								Submit
+							</Button>
+						)}
 					</DialogActions>
 				</form>
 			</Dialog>
