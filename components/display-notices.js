@@ -490,9 +490,15 @@ const EditForm = ({ data, handleClose, modal }) => {
 						)}
 					</DialogContent>
 					<DialogActions>
-						<Button type="submit" color="primary">
-							Submit
-						</Button>
+						{submitting ? (
+							<Button type="submit" color="primary" disabled>
+								Submitting
+							</Button>
+						) : (
+							<Button type="submit" color="primary">
+								Submit
+							</Button>
+						)}
 					</DialogActions>
 				</form>
 			</Dialog>

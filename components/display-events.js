@@ -323,88 +323,175 @@ const AddForm = ({ handleClose, modal }) => {
 };
 
 const EditForm = ({ data, handleClose, modal }) => {
-	let openDate = dateformatter(data.openDate);
-	// console.log(data.openDate);
-	const [important, setImportant] = useState(data.important);
+	const [session, loading] = useSession();
+	const [content, setContent] = useState({
+		id: data.id,
+		title: data.title,
+		openDate: dateformatter(data.openDate),
+		closeDate: dateformatter(data.closeDate),
+		doclink: data.doclink,
+		venue: data.venue,
+	});
 
-	let closeDate = dateformatter(data.closeDate);
-	const handleChange = () => {
-		setImportant(!important);
+	const [attachments, setAttachments] = useState(data.attachments);
+	const [submitting, setSubmitting] = useState(false);
+
+	const handleChange = (e) => {
+		if (e.target.name == "important" || e.target.name == "isVisible") {
+			setContent({ ...content, [e.target.name]: e.target.checked });
+		} else {
+			setContent({ ...content, [e.target.name]: e.target.value });
+		}
+		// console.log(content);
 	};
 
+	const handleAttachments = (e, idx) => {
+		let attach = [...attachments];
+		attach[idx].caption = e.target.value;
+		setAttachments(attach);
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		setSubmitting(true);
+		let open = new Date(content.openDate);
+		let close = new Date(content.closeDate);
+		open = open.getTime();
+		close = close.getTime();
+		let now = Date.now();
+
+		let data = {
+			...content,
+			openDate: open,
+			closeDate: close,
+			timestamp: now,
+			email: session.user.email,
+			attachments: [...attachments],
+		};
+
+		console.log(data);
+		let result = await fetch("/api/update/event", {
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			method: "POST",
+			body: JSON.stringify(data),
+		});
+		result = await result.json();
+		if (result instanceof Error) {
+			console.log("Error Occured");
+			console.log(result);
+		}
+		console.log(result);
+		window.location.reload();
+	};
 	return (
 		<>
 			<Dialog open={modal} onClose={handleClose}>
-				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Edit Event
-					<Delete color="secondary" />
-				</DialogTitle>
-				<DialogContent>
-					<TextField
-						margin="dense"
-						id="label"
-						label="Title"
-						type="text"
-						fullWidth
-						defaultValue={data.title}
-					/>{" "}
-					<TextField
-						margin="dense"
-						id="openDate"
-						label="Open Date"
-						type="date"
-						fullWidth
-						defaultValue={openDate}
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<TextField
-						id="closeDate"
-						label="Close Date"
-						margin="dense"
-						type="date"
-						fullWidth
-						defaultValue={closeDate}
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<TextField
-						margin="dense"
-						id="venue"
-						label="Venue"
-						type="text"
-						fullWidth
-						defaultValue={data.venue}
-					/>
-					<TextField
-						margin="dense"
-						id="Doclink"
-						label="Registration form link (like: Google Doc, etc.) "
-						type="text"
-						fullWidth
-						defaultValue={data.doclink}
-					/>
-					<h2>Attachments</h2>
-					<TextField
-						id="attachments"
-						margin="dense"
-						type="text"
-						defaultValue={"Download"}
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<a href={data.attachments} target="_blank">
-						<Link />
-					</a>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Submit
-					</Button>
-				</DialogActions>
+				<form onSubmit={(e) => handleSubmit(e)}>
+					<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
+						Edit Event
+						<Delete color="secondary" />
+					</DialogTitle>
+					<DialogContent>
+						<TextField
+							margin="dense"
+							id="label"
+							label="Title"
+							name="title"
+							type="text"
+							required
+							fullWidth
+							placeholder="Title"
+							onChange={(e) => handleChange(e)}
+							value={content.title}
+						/>
+						<TextField
+							margin="dense"
+							id="openDate"
+							label="Open Date"
+							name="openDate"
+							type="date"
+							required
+							value={content.openDate}
+							onChange={(e) => handleChange(e)}
+							fullWidth
+						/>
+						<TextField
+							id="closeDate"
+							label="Close Date"
+							name="closeDate"
+							margin="dense"
+							required
+							type="date"
+							onChange={(e) => handleChange(e)}
+							value={content.closeDate}
+							fullWidth
+						/>
+						<TextField
+							margin="dense"
+							id="venue"
+							label="Venue"
+							type="text"
+							fullWidth
+							placeholder={"Venue of Event"}
+							name="venue"
+							type="text"
+							required
+							onChange={(e) => handleChange(e)}
+							value={content.venue}
+						/>
+						<TextField
+							margin="dense"
+							id="Doclink"
+							label="Registration form link (like: Google Doc, etc.) "
+							type="text"
+							fullWidth
+							placeholder={"Leave it blank if not available"}
+							name="doclink"
+							type="text"
+							onChange={(e) => handleChange(e)}
+							value={content.doclink}
+						/>
+
+						{data.attachments && (
+							<>
+								<h2>Attachments</h2>
+								{attachments.map((attachment, idx) => {
+									return (
+										<div key={idx}>
+											<TextField
+												id="attachments"
+												margin="dense"
+												type="text"
+												value={attachment.caption}
+												onChange={(e) => handleAttachments(e, idx)}
+												InputLabelProps={{
+													shrink: true,
+												}}
+											/>
+											<a href={attachment.url} target="_blank">
+												<Link />
+											</a>
+										</div>
+									);
+								})}
+							</>
+						)}
+					</DialogContent>
+					<DialogActions>
+						{submitting ? (
+							<Button type="submit" color="primary" disabled>
+								Submitting
+							</Button>
+						) : (
+							<Button type="submit" color="primary">
+								Submit
+							</Button>
+						)}
+					</DialogActions>
+				</form>
 			</Dialog>
 		</>
 	);
