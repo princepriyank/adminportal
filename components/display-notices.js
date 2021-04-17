@@ -302,7 +302,7 @@ const AddForm = ({ handleClose, modal }) => {
 							attachments={attachments}
 							setAttachments={setAttachments}
 						/>
-						{/* <a href={data.attachments} target="__blank">
+						{/* <a href={data.attachments} target="_blank">
 							<FontAwesomeIcon icon={faExternalLinkAlt} />
 						</a> */}
 					</DialogContent>
@@ -429,7 +429,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 												shrink: true,
 											}}
 										/>
-										<a href={attachment.url} target="__blank">
+										<a href={attachment.url} target="_blank">
 											<Link />
 										</a>
 									</>
@@ -501,7 +501,9 @@ const DataDisplay = (props) => {
 											return (
 												<>
 													<Flag />
-													<a href={attachment.url}>{attachment.caption}</a>
+													<a href={attachment.url} target="_blank">
+														{attachment.caption}
+													</a>
 												</>
 											);
 										})}

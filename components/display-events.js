@@ -301,7 +301,7 @@ const AddForm = ({ handleClose, modal }) => {
 							attachments={attachments}
 							setAttachments={setAttachments}
 						/>
-						{/* <a href={data.attachments} target="__blank">
+						{/* <a href={data.attachments} target="_blank">
 							<FontAwesomeIcon icon={faExternalLinkAlt} />
 						</a> */}
 					</DialogContent>
@@ -396,7 +396,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 							shrink: true,
 						}}
 					/>
-					<a href={data.attachments} target="__blank">
+					<a href={data.attachments} target="_blank">
 						<Link />
 					</a>
 				</DialogContent>
@@ -455,7 +455,7 @@ const DataDisplay = (props) => {
 
 					return (
 						<React.Fragment key={detail.id}>
-							<Grid item xs={12} sm={6} lg={9}>
+							<Grid item xs={12} sm={8} lg={10}>
 								<Paper className={classes.paper}>
 									<span className={classes.truncate}>{detail.title}</span>
 									{detail.attachments &&
@@ -463,7 +463,9 @@ const DataDisplay = (props) => {
 											return (
 												<>
 													<Flag />
-													<a href={attachment.url}>{attachment.caption}</a>
+													<a href={attachment.url} target="_blank">
+														{attachment.caption}
+													</a>
 												</>
 											);
 										})}{" "}
@@ -472,33 +474,8 @@ const DataDisplay = (props) => {
 									<span style={{ float: "right" }}>{openDate}</span>
 								</Paper>
 							</Grid>
-							<Grid item xs={4} sm={2} lg={1}>
-								<Paper
-									className={classes.paper}
-									style={{ textAlign: `center` }}
-								>
-									{detail.isVisible ? (
-										<>
-											<Visibility className={classes.icon} />
-											{/* <i className="fa fa-eye" style={{ color: "action" }}></i> */}
-											<span>Visible</span>
-										</>
-									) : (
-										<>
-											{/* <i
-												className="fa fa-eye-slash"
-												style={{ color: "secondary" }}
-											></i> */}
-											<VisibilityOff
-												color="secondary"
-												className={classes.icon}
-											/>
-											<span>Archive</span>
-										</>
-									)}
-								</Paper>
-							</Grid>
-							<Grid item xs={4} sm={2} lg={1}>
+
+							<Grid item xs={6} sm={2} lg={1}>
 								<Paper
 									className={classes.paper}
 									style={{ textAlign: `center` }}
@@ -509,7 +486,7 @@ const DataDisplay = (props) => {
 									</a>
 								</Paper>{" "}
 							</Grid>
-							<Grid item xs={4} sm={2} lg={1}>
+							<Grid item xs={6} sm={2} lg={1}>
 								<Paper
 									className={classes.paper}
 									style={{ textAlign: `center`, cursor: `pointer` }}
