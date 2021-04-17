@@ -324,125 +324,177 @@ const AddForm = ({ handleClose, modal }) => {
 };
 
 const EditForm = ({ data, handleClose, modal }) => {
-	let openDate = dateformatter(data.openDate);
-	// console.log(openDate);
-	const [important, setImportant] = useState(data.important);
-	const [isVisible, setIsVisible] = useState(data.isVisible);
+	const [session, loading] = useSession();
+	const [content, setContent] = useState({
+		id: data.id,
+		title: data.title,
+		openDate: dateformatter(data.openDate),
+		closeDate: dateformatter(data.closeDate),
+		isVisible: data.isVisible ? true : false,
+		important: data.important ? true : false,
+	});
 
-	let closeDate = dateformatter(data.closeDate);
-	const handleBooleanChange = (name) => {
-		if (name == "important") {
-			setImportant(!important);
-		} else if (name == "visibility") {
-			setIsVisible(!isVisible);
+	const [attachments, setAttachments] = useState(data.attachments);
+	const [submitting, setSubmitting] = useState(false);
+
+	const handleChange = (e) => {
+		if (e.target.name == "important" || e.target.name == "isVisible") {
+			setContent({ ...content, [e.target.name]: e.target.checked });
+		} else {
+			setContent({ ...content, [e.target.name]: e.target.value });
 		}
+		// console.log(content);
+	};
+
+	const handleAttachments = (e, idx) => {
+		let attach = [...attachments];
+		attach[idx].caption = e.target.value;
+		setAttachments(attach);
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		setSubmitting(true);
+		let open = new Date(content.openDate);
+		let close = new Date(content.closeDate);
+		open = open.getTime();
+		close = close.getTime();
+		let now = Date.now();
+
+		let data = {
+			...content,
+
+			isVisible: content.isVisible ? 1 : 0,
+			important: content.important ? 1 : 0,
+			openDate: open,
+			closeDate: close,
+			timestamp: now,
+			email: session.user.email,
+			attachments: [...attachments],
+		};
+
+		console.log(data);
+		let result = await fetch("/api/update/notice", {
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			method: "POST",
+			body: JSON.stringify(data),
+		});
+		result = await result.json();
+		if (result instanceof Error) {
+			console.log("Error Occured");
+			console.log(result);
+		}
+		console.log(result);
+		window.location.reload();
 	};
 
 	return (
 		<>
 			<Dialog open={modal} onClose={handleClose}>
-				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Edit Notice
-					<Delete color="secondary" />
-				</DialogTitle>
-				<DialogContent>
-					<TextField
-						margin="dense"
-						id="label"
-						label="Title"
-						type="text"
-						fullWidth
-						defaultValue={data.title}
-					/>{" "}
-					<TextField
-						margin="dense"
-						id="openDate"
-						label="Open Date"
-						type="date"
-						fullWidth
-						defaultValue={openDate}
-						// onChange={(e) => {
-						// 	console.log(e.target.value);
-						// 	let da = new Date(e.target.value);
-						// 	console.log(
-						// 		" " +
-						// 			da.getTime() +
-						// 			" " +
-						// 			da.getMonth() +
-						// 			" " +
-						// 			da.getDate() +
-						// 			" " +
-						// 			da.getFullYear()
-						// 	);
-						// }}
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<TextField
-						id="closeDate"
-						label="Close Date"
-						margin="dense"
-						type="date"
-						fullWidth
-						defaultValue={closeDate}
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<FormControlLabel
-						control={
-							<Checkbox
-								checked={important}
-								onChange={(e) => {
-									handleBooleanChange(e.target.name);
-								}}
-								name="important"
-							/>
-						}
-						label="Important"
-					/>
-					<FormControlLabel
-						control={
-							<Checkbox
-								checked={isVisible}
-								onChange={(e) => {
-									handleBooleanChange(e.target.name);
-								}}
-								name="visibility"
-							/>
-						}
-						label="Visibility"
-					/>
-					{data.attachments && (
-						<>
-							<h2>Attachments</h2>
-							{data.attachments.map((attachment) => {
-								return (
-									<>
-										<TextField
-											id="attachments"
-											margin="dense"
-											type="text"
-											value={attachment.caption}
-											InputLabelProps={{
-												shrink: true,
-											}}
-										/>
-										<a href={attachment.url} target="_blank">
-											<Link />
-										</a>
-									</>
-								);
-							})}
-						</>
-					)}
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Submit
-					</Button>
-				</DialogActions>
+				<form
+					onSubmit={(e) => {
+						handleSubmit(e);
+					}}
+				>
+					<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
+						Edit Notice
+						<Delete color="secondary" />
+					</DialogTitle>
+					<DialogContent>
+						<TextField
+							margin="dense"
+							id="label"
+							label="Title"
+							name="title"
+							type="text"
+							required
+							fullWidth
+							placeholder="Title"
+							onChange={(e) => handleChange(e)}
+							value={content.title}
+						/>
+						<TextField
+							margin="dense"
+							id="openDate"
+							label="Open Date"
+							name="openDate"
+							type="date"
+							required
+							value={content.openDate}
+							onChange={(e) => handleChange(e)}
+							fullWidth
+							InputLabelProps={{
+								shrink: true,
+							}}
+						/>
+						<TextField
+							id="closeDate"
+							label="Close Date"
+							name="closeDate"
+							margin="dense"
+							required
+							type="date"
+							onChange={(e) => handleChange(e)}
+							value={content.closeDate}
+							fullWidth
+							InputLabelProps={{
+								shrink: true,
+							}}
+						/>
+						<FormControlLabel
+							control={
+								<Checkbox
+									name="important"
+									checked={content.important}
+									onChange={(e) => handleChange(e)}
+								/>
+							}
+							label="Important"
+						/>
+						<FormControlLabel
+							control={
+								<Checkbox
+									name="isVisible"
+									checked={content.isVisible}
+									onChange={(e) => handleChange(e)}
+								/>
+							}
+							label="Visibility"
+						/>
+						{data.attachments && (
+							<>
+								<h2>Attachments</h2>
+								{attachments.map((attachment, idx) => {
+									return (
+										<div key={idx}>
+											<TextField
+												id="attachments"
+												margin="dense"
+												type="text"
+												value={attachment.caption}
+												onChange={(e) => handleAttachments(e, idx)}
+												InputLabelProps={{
+													shrink: true,
+												}}
+											/>
+											<a href={attachment.url} target="_blank">
+												<Link />
+											</a>
+										</div>
+									);
+								})}
+							</>
+						)}
+					</DialogContent>
+					<DialogActions>
+						<Button type="submit" color="primary">
+							Submit
+						</Button>
+					</DialogActions>
+				</form>
 			</Dialog>
 		</>
 	);
