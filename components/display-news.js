@@ -42,6 +42,12 @@ const useStyles = makeStyles((theme) => ({
 		marginLeft: `auto`,
 		marginRight: `auto`,
 	},
+	attached: {
+		"& > span": { paddingLeft: `8px` },
+		"& > span:first-child": {
+			paddingLeft: 0,
+		},
+	},
 }));
 
 const AddAttachments = ({ attachments, setAttachments }) => {
@@ -308,81 +314,158 @@ const AddForm = ({ handleClose, modal }) => {
 		</>
 	);
 };
-const EditForm = ({ data, handleClose, modal }) => {
-	let openDate = dateformatter(data.openDate);
-	// console.log(data.openDate);
-	const [important, setImportant] = useState(data.important);
 
-	let closeDate = dateformatter(data.closeDate);
-	const handleChange = () => {
-		setImportant(!important);
+const EditForm = ({ data, handleClose, modal }) => {
+	const [session, loading] = useSession();
+	const [content, setContent] = useState({
+		id: data.id,
+		title: data.title,
+		openDate: dateformatter(data.openDate),
+		closeDate: dateformatter(data.closeDate),
+		description: data.description,
+	});
+	const [submitting, setSubmitting] = useState(false);
+
+	const [image, setImage] = useState(data.image);
+	const handleChange = (e) => {
+		setContent({ ...content, [e.target.name]: e.target.value });
+		//console.log(content)
+	};
+	const handleAttachments = (e, idx) => {
+		let attach = [...image];
+		attach[idx].caption = e.target.value;
+		setImage(attach);
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		setSubmitting(true);
+		let open = new Date(content.openDate);
+		let close = new Date(content.closeDate);
+		open = open.getTime();
+		close = close.getTime();
+		let now = Date.now();
+
+		let finaldata = {
+			...content,
+			openDate: open,
+			closeDate: close,
+			timestamp: now,
+			email: session.user.email,
+			author: session.user.name,
+			image: [...image],
+		};
+
+		console.log(finaldata);
+		let result = await fetch("/api/update/news", {
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			method: "POST",
+			body: JSON.stringify(finaldata),
+		});
+		result = await result.json();
+		if (result instanceof Error) {
+			console.log("Error Occured");
+			console.log(result);
+		}
+		console.log(result);
+		window.location.reload();
 	};
 
 	return (
 		<>
 			<Dialog open={modal} onClose={handleClose}>
-				<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
-					Edit News
-					<Delete color="secondary" />
-				</DialogTitle>
-				<DialogContent>
-					<TextField
-						margin="dense"
-						id="label"
-						label="Title"
-						type="text"
-						fullWidth
-						defaultValue={data.title}
-					/>{" "}
-					<TextField
-						margin="dense"
-						id="openDate"
-						label="Open Date"
-						type="date"
-						fullWidth
-						defaultValue={openDate}
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<TextField
-						id="closeDate"
-						label="Close Date"
-						margin="dense"
-						type="date"
-						fullWidth
-						defaultValue={closeDate}
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<TextField
-						margin="dense"
-						id="description"
-						label="Description"
-						type="text"
-						fullWidth
-						defaultValue={data.description}
-					/>
-					{/* <h2>Attachments</h2>
-					<TextField
-						id="attachments"
-						margin="dense"
-						type="text"
-						defaultValue={"Download"}
-						InputLabelProps={{
-							shrink: true,
-						}}
-					/>
-					<a href={data.attachments} target="_blank">
-						<Link />
-					</a> */}
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Submit
-					</Button>
-				</DialogActions>
+				<form onSubmit={(e) => handleSubmit(e)}>
+					<DialogTitle disableTypography style={{ fontSize: `2rem` }}>
+						Edit Innovations
+						<Delete color="secondary" />
+					</DialogTitle>
+					<DialogContent>
+						<TextField
+							margin="dense"
+							id="label"
+							label="Title"
+							name="title"
+							type="text"
+							required
+							fullWidth
+							placeholder="Title"
+							onChange={(e) => handleChange(e)}
+							value={content.title}
+						/>
+						<TextField
+							margin="dense"
+							id="desc"
+							label="Description"
+							type="text"
+							fullWidth
+							placeholder={"Description"}
+							name="description"
+							required
+							onChange={(e) => handleChange(e)}
+							value={content.description}
+						/>
+						<TextField
+							margin="dense"
+							id="openDate"
+							label="Open Date"
+							name="openDate"
+							type="date"
+							required
+							value={content.openDate}
+							onChange={(e) => handleChange(e)}
+							fullWidth
+						/>
+						<TextField
+							id="closeDate"
+							label="Close Date"
+							name="closeDate"
+							margin="dense"
+							required
+							type="date"
+							onChange={(e) => handleChange(e)}
+							value={content.closeDate}
+							fullWidth
+						/>
+						{data.image && (
+							<>
+								<h2>Images</h2>
+								{image.map((img, idx) => {
+									return (
+										<div key={idx}>
+											<TextField
+												id="attachments"
+												margin="dense"
+												type="text"
+												value={img.caption}
+												onChange={(e) => handleAttachments(e, idx)}
+												InputLabelProps={{
+													shrink: true,
+												}}
+											/>
+											<a href={img.url} target="_blank">
+												<Link />
+											</a>
+										</div>
+									);
+								})}
+							</>
+						)}
+					</DialogContent>
+					<DialogActions>
+						{submitting ? (
+							<Button type="submit" color="primary" disabled>
+								Submitting
+							</Button>
+						) : (
+							<Button type="submit" color="primary">
+								Submit
+							</Button>
+						)}
+					</DialogActions>
+				</form>
 			</Dialog>
 		</>
 	);
@@ -462,22 +545,39 @@ const DataDisplay = (props) => {
 					return (
 						<React.Fragment key={detail.id}>
 							<Grid item xs={12} sm={8} lg={10}>
-								<Paper className={classes.paper}>
+								<Paper
+									className={classes.paper}
+									style={{ minHeight: `50px`, position: `relative` }}
+								>
 									<span className={classes.truncate}>{detail.title}</span>
-									{detail.image &&
-										detail.image.map((img) => {
-											return (
-												<>
-													<Flag />
-													<a href={img.url} target="_blank">
-														{img.caption}
-													</a>
-												</>
-											);
-										})}{" "}
-									<LocationOn color="secondary" />
-									NIT PATNA
-									<span style={{ float: "right" }}>{openDate}</span>
+									<div className={classes.attached}>
+										{detail.image &&
+											detail.image.map((img, idx) => {
+												return (
+													<span
+														key={idx}
+														style={{
+															display: `inline-flex`,
+															margin: `5px 0 `,
+														}}
+													>
+														<Flag />
+														<a href={img.url} target="_blank">
+															{img.caption}
+														</a>{" "}
+													</span>
+												);
+											})}{" "}
+									</div>
+									<span
+										style={{
+											position: `absolute`,
+											right: `12px`,
+											bottom: `12px`,
+										}}
+									>
+										{openDate}
+									</span>
 								</Paper>
 							</Grid>
 

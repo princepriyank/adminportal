@@ -42,6 +42,12 @@ const useStyles = makeStyles((theme) => ({
 		marginLeft: `auto`,
 		marginRight: `auto`,
 	},
+	attached: {
+		"& > span": { paddingLeft: `8px` },
+		"& > span:first-child": {
+			paddingLeft: 0,
+		},
+	},
 }));
 
 const AddAttachments = ({ attachments, setAttachments }) => {
@@ -361,7 +367,7 @@ const EditForm = ({ data, handleClose, modal }) => {
 		close = close.getTime();
 		let now = Date.now();
 
-		let data = {
+		let finaldata = {
 			...content,
 
 			isVisible: content.isVisible ? 1 : 0,
@@ -373,14 +379,14 @@ const EditForm = ({ data, handleClose, modal }) => {
 			attachments: [...attachments],
 		};
 
-		console.log(data);
+		console.log(finaldata);
 		let result = await fetch("/api/update/notice", {
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
 			},
 			method: "POST",
-			body: JSON.stringify(data),
+			body: JSON.stringify(finaldata),
 		});
 		result = await result.json();
 		if (result instanceof Error) {
@@ -552,21 +558,40 @@ const DataDisplay = (props) => {
 					return (
 						<React.Fragment key={detail.id}>
 							<Grid item xs={12} sm={6} lg={9}>
-								<Paper className={classes.paper}>
+								<Paper
+									className={classes.paper}
+									style={{ minHeight: `50px`, position: `relative` }}
+								>
 									<span className={classes.truncate}>{detail.title}</span>
-									{detail.attachments &&
-										detail.attachments.map((attachment) => {
-											return (
-												<>
-													<Flag />
-													<a href={attachment.url} target="_blank">
-														{attachment.caption}
-													</a>
-												</>
-											);
-										})}
+									<div className={classes.attached}>
+										{detail.attachments &&
+											detail.attachments.map((attachment, idx) => {
+												return (
+													<span
+														key={idx}
+														style={{
+															display: `inline-flex`,
+															margin: `5px 0 `,
+														}}
+													>
+														<Flag />
+														<a href={attachment.url} target="_blank">
+															{attachment.caption}
+														</a>
+													</span>
+												);
+											})}
+									</div>
 
-									<span style={{ float: "right" }}>{openDate}</span>
+									<span
+										style={{
+											position: `absolute`,
+											right: `12px`,
+											bottom: `12px`,
+										}}
+									>
+										{openDate}
+									</span>
 								</Paper>
 							</Grid>
 							<Grid item xs={4} sm={2} lg={1}>
