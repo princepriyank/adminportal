@@ -11,14 +11,14 @@ const Wrap = styled.div`
 `;
 
 export default function Page() {
-  const { entries, isLoading } = useEntries("/api/notice/all");
+	const { entries, isLoading } = useEntries("/api/news/all");
 
-  console.log(entries);
-  return (
-    <Layout>
-      <Wrap>
-        {isLoading ? <LoadAnimation /> : <DataDisplay data={entries} />}
-      </Wrap>
-    </Layout>
-  );
+	console.log(entries);
+	return (
+		<Layout>
+			<Wrap>
+				{isLoading ? <LoadAnimation /> : <DataDisplay data={entries} />}
+			</Wrap>
+		</Layout>
+	);
 }

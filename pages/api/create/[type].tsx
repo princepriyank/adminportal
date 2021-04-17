@@ -4,69 +4,46 @@ import { query } from "../../../lib/db";
 
 const handler = async (req, res) => {
   const session = await getSession({ req });
-
+  // let session = true;
+  
   if (session) {
     const { type } = req.query;
     try {
-      const params = req.body;
+      let params = req.body;
+
       if (type == "notice") {
-        await query(
-          `insert into notices where (
-            id=${params.id},
-            title=${params.title},
-            timestamp=${params.timestamp},
-            openDate=${params.openDate},
-            closeDate=${params.closeDate},
-            important=${params.important},
-            attachments=${params.attachments},
-            email=${params.email},
-            primary key (id))`
+        params.attachments = JSON.stringify(params.attachments)
+        let result = await query(
+          `INSERT INTO notices (id,title,timestamp,openDate,closeDate,important,attachments,email,isVisible) VALUES ` +
+          `('${params.id}','${params.title}','${params.timestamp}','${params.openDate}','${params.closeDate}','${params.important}','${params.attachments}','${params.email}','${params.isVisible}')`
+         
         );
+        res.json(result);
       } else if (type == "event") {
-        await query(
-          `insert into events where (
-            id=${params.id},
-            title=${params.title},
-            timestamp=${params.timestamp},
-            openDate=${params.openDate},
-            closeDate=${params.closeDate},
-              venue=${params.venue},
-              doclink=${params.doclink}
-            important=${params.important},
-            attachments=${params.attachments},
-            email=${params.email},
-            primary key (id))`
+         params.attachments = JSON.stringify(params.attachments)
+        let result = await query(
+          `INSERT INTO events (id,title,timestamp,openDate,closeDate,venue,doclink,attachments,email) VALUES ` +
+          `(${params.id},'${params.title}',${params.timestamp},${params.openDate},${params.closeDate},'${params.venue}','${params.doclink}','${params.attachments}','${params.email}')`
+         
         );
+        res.json(result)
+
       } else if (type == "innovation") {
-        await query(
-          `insert into notices where (
-            	id=${params.id},
-            	title=${params.title},
-            	timestamp=${params.timestamp},
-            	openDate=${params.openDate},
-            	closeDate=${params.closeDate},
-                description=${params.description},
-                image=${params.image},
-                author=${params.author},
-            	important=${params.important},
-            	email=${params.email},
-                primary key(id))`
+         params.image = JSON.stringify(params.image)
+        let result = await query(
+          `INSERT INTO innovation (id,title,timestamp,openDate,closeDate,description,image,author,email) VALUES ` +
+          `(${params.id},'${params.title}',${params.timestamp},${params.openDate},${params.closeDate},'${params.description}','${params.image}','${params.author}','${params.email}')`
         );
+        res.json(result)
+      
       } else if (type == "news") {
-        await query(
-          `insert into news where (
-		id=${params.id},
-		title=${params.title},
-		timestamp=${params.timestamp},
-		openDate=${params.openDate},
-		closeDate=${params.closeDate},
-      description=${params.description},
-      image=${params.image},
-      author=${params.author},
-		important=${params.important},
-		email=${params.email},
-      primary key(id))`
+        params.image = JSON.stringify(params.image)
+        let result = await query(
+          `INSERT INTO news (id,title,timestamp,openDate,closeDate,description,image,author,email) VALUES ` +
+          `(${params.id},'${params.title}',${params.timestamp},${params.openDate},${params.closeDate},'${params.description}','${params.image}','${params.author}','${params.email}')`
         );
+        res.json(result)
+
       } else if (type == "user") {
         await query(
           `insert into users where (

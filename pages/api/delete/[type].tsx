@@ -10,13 +10,22 @@ const handler = async (req, res) => {
     try {
       const params = req.body;
       if (type == "notice") {
-        await query(`delete from notices WHERE id = ${params}`);
+        
+        let result = await query(`DELETE from notices WHERE id = ${params}`);
+      res.json(result)
       } else if (type == "event") {
-        await query(`delete from events WHERE id = ${params}`);
+        console.log(params);
+        
+        let result = await query(`DELETE from events WHERE id = ${params}`);
+      res.json(result)
       } else if (type == "innovation") {
-        await query(`delete from innovation WHERE id = ${params}`);
+        
+        let result = await query(`delete from innovation WHERE id = ${params}`);
+      res.json(result)
       } else if (type == "news") {
-        await query(`delete from news WHERE id = ${params}`);
+        
+        let result = await query(`delete from news WHERE id = ${params}`);
+      res.json(result)
       } else if (type == "user") {
         await query(`delete from users WHERE id = ${params}`);
       } else if (type == "memberships") {
